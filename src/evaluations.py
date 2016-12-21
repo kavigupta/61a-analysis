@@ -5,6 +5,7 @@ from os import system
 from os import listdir
 import csv
 
+from constants import DATA_DIR
 from tools import flatten
 
 class Evaluation:
@@ -57,8 +58,9 @@ def proc_evaluations(evaluations):
     Extracts the given zip file of evaluations and merges them all into a single dictionary from name
         and exam id to evaluation list.
     """
-    system("unzip {0} -d extracted".format(evaluations))
-    loc = 'extracted/' + listdir('extracted')[0]
+    extracted = DATA_DIR + '/extracted/'
+    system("unzip {} -d {}".format(evaluations, extracted))
+    loc = extracted + listdir(extracted)[0]
     evals = []
     keys = set()
     for fil in listdir(loc):
@@ -68,6 +70,6 @@ def proc_evaluations(evaluations):
     merged = {}
     for key in keys:
         merged[key] = Evaluation.merged(x[key] for x in evals)
-    system('rm -r extracted')
+    system('rm -r {}'.format(extracted))
     return merged
 
