@@ -1,6 +1,5 @@
 
-from os import system
-from os.path import listdir
+from os import system, listdir
 
 from PIL import Image
 from pytesseract import image_to_string
@@ -26,9 +25,11 @@ def setup_ocr(raw_data):
     base = DATA_DIR + "/extract/"
     mainfolder = base + listdir(base)[0]
     for index, path in enumerate(sorted(listdir(mainfolder))):
+        if index % 100 == 0:
+            print("*", end="")
         fullpath = mainfolder + "/" + path
         system("mkdir {}/ocr".format(DATA_DIR))
-        basic_format = r"pdftoppm -png -f 3 -l 3 -x 570 -y %s -W 500 -H 100 {} > {}/ocr/%s{}.png" \
+        basic_format = r"pdftoppm -png -f 3 -l 3 -x 170 -y %s -W 900 -H 100 {} > {}/ocr/%s{}.png" \
             .format(fullpath, DATA_DIR, index)
         system(basic_format % (1030, "left"))
         system(basic_format % (1115, "right"))
