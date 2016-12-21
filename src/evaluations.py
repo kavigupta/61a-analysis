@@ -1,3 +1,6 @@
+"""
+Module for reading and processing evaluations, which are the scores for individual questions.
+"""
 from os import system
 from os import listdir
 import csv
@@ -5,6 +8,10 @@ import csv
 from tools import flatten
 
 class Evaluation:
+    """
+    A data structure used for representing an evaluation, or a set of scores for a particular
+        individual on a particular exam.
+    """
     def __init__(self, score, rubric_items, adjustment, comments, grader):
         self.score = score
         self.rubric_items = rubric_items
@@ -16,6 +23,9 @@ class Evaluation:
         return ("Evaluation(" + ", ".join(["{}"] * 4) + ")").format(*(repr(x) for x in tupled))
     @staticmethod
     def merged(evals):
+        """
+        Merges the provided sequence of evaluations by concatenating every list inside it.
+        """
         evals = list(evals)
         return Evaluation(
             flatten(x.score for x in evals),
@@ -27,18 +37,26 @@ class Evaluation:
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}
 
 def read_evaluation_csv(csv_file):
+    """
+    Reads in a CSV as an evaluation. Format specified by assertions.
+    """
     with open(csv_file, 'r') as fil:
         csvlines = list(csv.reader(fil))
-    _, *rows = csvlines
+    header, *rows = csvlines
+    assert header[1] == "Name" and header[4] == "Score" and header [-3:] == ["Adjustment","Comments","Grader"]
     for run_id, row in enumerate(rows):
         if len(row) == 0:
             break
         rubric_items = [RUBRIC_ITEMS[x] for x in row[5:-3]]
         adjustment = float(row[-3]) if row[-3] != '' else 0
         yield (run_id, row[1]), \
-                Evaluation([float(row[4])], rubric_items, [adjustment], [row[-2]], [row[-1]])
+                Evaluation([float(row[4])], [rubric_items], [adjustment], [row[-2]], [row[-1]])
 
 def proc_evaluations(evaluations):
+    """
+    Extracts the given zip file of evaluations and merges them all into a single dictionary from name
+        and exam id to evaluation list.
+    """
     system("unzip {0} -d extracted".format(evaluations))
     loc = 'extracted/' + listdir('extracted')[0]
     evals = []
