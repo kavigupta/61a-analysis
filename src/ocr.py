@@ -1,6 +1,12 @@
+
+from os import system
+from os.path import listdir
+
 from PIL import Image
 from pytesseract import image_to_string
 import editdistance
+
+from constants import DATA_DIR
 
 def classify(image, people_class, max_classify_distance=1, min_nonclassify_distance=3):
     read = image_to_string(Image.open(image)).lower()
@@ -14,3 +20,15 @@ def classify(image, people_class, max_classify_distance=1, min_nonclassify_dista
         elif max_classify_distance < dist <= min_nonclassify_distance:
             return None
     return result
+
+def setup_ocr(raw_data):
+    system("unzip {} -d {}/extract".format(raw_data, DATA_DIR))
+    base = DATA_DIR + "/extract/"
+    mainfolder = base + listdir(base)[0]
+    for index, path in enumerate(sorted(listdir(mainfolder))):
+        fullpath = mainfolder + "/" + path
+        system("mkdir {}/ocr".format(DATA_DIR))
+        basic_format = r"pdftoppm -png -f 3 -l 3 -x 570 -y %s -W 500 -H 100 {} > {}/ocr/%s{}.png" \
+            .format(fullpath, DATA_DIR, index)
+        system(basic_format % (1030, "left"))
+        system(basic_format % (1115, "right"))
