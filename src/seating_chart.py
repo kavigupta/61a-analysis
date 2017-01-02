@@ -8,6 +8,7 @@ from functools import total_ordering
 from itertools import groupby
 
 from abc import ABCMeta, abstractmethod
+from enum import Enum
 
 class Column:
     """
@@ -19,6 +20,31 @@ class Column:
         self.cmax = cmax
     def __repr__(self):
         return "Column(val={}, cmin={}, cmax={})".format(self.val, self.cmin, self.cmax)
+    def relation(self, other):
+        basis = min((self.range, other.range))
+        sloc, oloc = self.location * basis, other.location * basis
+        if sloc == oloc:
+            return ColumnRelation.ALIGNED
+        if sloc == oloc + 1:
+            return ColumnRelation.RIGHT
+        if sloc == oloc - 1:
+            return ColumnRelation.LEFT
+        return ColumnRelation.DOES_NOT_EXIST
+    @property
+    def range(self):
+        return self.cmax - self.cmin
+    @property
+    def location(self):
+        return (self.val - self.cmin) / (self.cmax - self.cmin)
+
+class ColumnRelation(Enum):
+    LEFT = -1
+    RIGHT = 1
+    ALIGNED = 0
+    DOES_NOT_EXIST = None
+    @property
+    def sideways(self):
+        return self == ColumnRelation.LEFT or self == ColumnRelation.RIGHT
 
 class AbstractLocation(metaclass=ABCMeta):
     """
