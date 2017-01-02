@@ -34,8 +34,10 @@ class TestLocation(TestCase):
         """
         Tests that the (LETTER:ROW)(NUMBER:COLUMN) format is preserved.
         """
-        self.assertEqual(Location('room', row=3, column=2), Location.create_location("room", "D2"))
-        self.assertEqual(Location('room', row=0, column=12), Location.create_location("room", "A12"))
+        self.assertEqual(Location('room', row=3, column=2),
+                         Location.create_location("room", "D2"))
+        self.assertEqual(Location('room', row=0, column=12),
+                         Location.create_location("room", "A12"))
 
 if __name__ == '__main__':
     main()
