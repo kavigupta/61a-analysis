@@ -1,25 +1,34 @@
+"""
+Handles the reading and processing of seating charts.
+"""
 import re
 import csv
 
 class Location:
+    """
+    A location at which a student takes an exam
+    """
     def __init__(self, room, row, column):
         self.room = room
         self.row = row
         self.column = column
     @staticmethod
     def create_location(room, seat):
-        m = re.search(r"([A-Za-z])([0-9]+)", seat)
-        if m:
-            return Location(room, int(m.group(2)), ord(m.group(1)) - ord('A'))
-        m = re.search(r"Row (\d+), Table ([A-Z]+), Seat ([i]+)", seat)
-        if m:
-            roman = {"i" : 1, "ii" : 2, "iii" : 3, "iv" : 4}[m.group(3)]
-            return Location(room, int(m.group(1)), (ord(m.group(2)) - ord('A'), roman))
-        m = re.search(r"N/A|FALSE", seat)
-        if m:
+        """
+        Parses a seat number
+        """
+        match = re.search(r"([A-Za-z])([0-9]+)", seat)
+        if match:
+            return Location(room, int(match.group(2)), ord(match.group(1)) - ord('A'))
+        match = re.search(r"Row (\d+), Table ([A-Z]+), Seat ([i]+)", seat)
+        if match:
+            roman = {"i" : 1, "ii" : 2, "iii" : 3, "iv" : 4}[match.group(3)]
+            return Location(room, int(match.group(1)), (ord(match.group(2)) - ord('A'), roman))
+        match = re.search(r"N/A|FALSE", seat)
+        if match:
             return None
-        m = re.search(r"(Front|Desk).*", seat)
-        if m:
+        match = re.search(r"(Front|Desk).*", seat)
+        if match:
             return None # TODO handle these better
         print(seat)
         raise RuntimeError(seat)
@@ -27,6 +36,9 @@ class Location:
         return "Location(room={!r}, row={!r}, column={!r})".format(self.room, self.row, self.column)
 
 def read_seating_chart(seat_file):
+    """
+    Reads a seating chart from a file
+    """
     with open(seat_file) as fil:
         data = list(csv.reader(fil))
     email_loc = data[0].index("Email Address")

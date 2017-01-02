@@ -8,6 +8,9 @@ import csv
 from constants import DATA_DIR
 
 class GradedMidterm:
+    """
+    A set of questions for a given individual
+    """
     def __init__(self, name, *evals):
         self.name = name
         self.scores = [x.score for x in evals]
@@ -43,7 +46,9 @@ def read_evaluation_csv(csv_file):
     with open(csv_file, 'r') as fil:
         csvlines = list(csv.reader(fil))
     header, *rows = csvlines
-    assert header[1] == "Name" and header[4] == "Score" and header [-3:] == ["Adjustment","Comments","Grader"]
+    assert header[1] == "Name"
+    assert header[4] == "Score"
+    assert header[-3:] == ["Adjustment", "Comments", "Grader"]
     for run_id, row in enumerate(rows):
         if len(row) == 0:
             break
@@ -54,8 +59,8 @@ def read_evaluation_csv(csv_file):
 
 def proc_evaluations(evaluations):
     """
-    Extracts the given zip file of evaluations and merges them all into a single dictionary from name
-        and exam id to evaluation list.
+    Extracts the given zip file of evaluations and merges them all into a single dictionary from
+        name and exam id to evaluation list.
     """
     extracted = DATA_DIR + '/extracted/'
     system("unzip {} -d {}".format(evaluations, extracted))

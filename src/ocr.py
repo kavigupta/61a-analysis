@@ -1,4 +1,6 @@
-
+"""
+Runs OCR on a given file.
+"""
 from os import system, listdir
 
 from PIL import Image
@@ -8,6 +10,9 @@ import editdistance
 from constants import DATA_DIR
 
 def classify(image, people_class, max_classify_distance=1, min_nonclassify_distance=3):
+    """
+    Runs an OCR classifier on a given image file, drawing from a dictionary
+    """
     read = image_to_string(Image.open(image)).lower()
     result = None
     for person in people_class:
@@ -21,6 +26,9 @@ def classify(image, people_class, max_classify_distance=1, min_nonclassify_dista
     return result
 
 def setup_ocr(raw_data):
+    """
+    Grabs names from a pdf to an image
+    """
     system("unzip {} -d {}/extract".format(raw_data, DATA_DIR))
     base = DATA_DIR + "/extract/"
     mainfolder = base + listdir(base)[0]
