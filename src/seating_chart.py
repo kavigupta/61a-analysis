@@ -84,6 +84,8 @@ class Column:
         A rational in [0, 1] representing an abstract concept of horizontal location (percentage
             left to right)
         """
+        if self.cmax == self.cmin:
+            return 0.5
         return (self.val - self.cmin) / (self.cmax - self.cmin)
 
 class Direction(Enum):
