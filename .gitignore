@@ -1,4 +1,4 @@
 real-data
 .ipynb_checkpoints
-temp.ipynb
+temp*.ipynb
 **/__pycache__
