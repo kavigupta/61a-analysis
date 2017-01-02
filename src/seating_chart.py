@@ -1,14 +1,18 @@
 """
 Handles the reading and processing of seating charts.
 """
+
 import re
 import csv
 
 from functools import total_ordering
 from itertools import groupby
+from collections import defaultdict
 
 from abc import ABCMeta, abstractmethod
 from enum import Enum
+
+from numpy import argmin
 
 class Column:
     """
@@ -33,6 +37,9 @@ class Column:
         if sloc == oloc - 1:
             return ColumnRelation.LEFT
         return ColumnRelation.DOES_NOT_EXIST
+    def closest(self, others):
+        arg = argmin([abs(self.location - other.location) for other in others])
+        return arg
     @property
     def range(self):
         """
@@ -46,6 +53,15 @@ class Column:
             left to right)
         """
         return (self.val - self.cmin) / (self.cmax - self.cmin)
+
+class Direction(Enum):
+    """
+    Represents a compass direction
+    """
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
+    DOWN = (0, -1)
+    UPWARDS = (0, 1)
 
 class ColumnRelation(Enum):
     """
@@ -61,6 +77,14 @@ class ColumnRelation(Enum):
         If it's rightwards or leftwards, not aligned or nonexistant
         """
         return self == ColumnRelation.LEFT or self == ColumnRelation.RIGHT
+    @property
+    def direction_for(self):
+        if self == ColumnRelation.LEFT:
+            return Direction.LEFT
+        elif self == ColumnRelation.RIGHT:
+            return Direction.RIGHT
+        else:
+            raise TypeError("{} cannot be coerced into a direction".format(self))
 
 class AbstractLocation(metaclass=ABCMeta):
     """
@@ -159,6 +183,8 @@ class UnknownLocation(AbstractLocation):
     @property
     def room(self):
         return unknown
+    def __bool__(self):
+        return False
 unknown = UnknownLocation()
 
 def read_seating_chart(seat_file):
@@ -200,4 +226,28 @@ def get_seating_chart(seat_file):
     """
     Performs process of getting a seating chart from a file and normalizing the columns.
     """
-    return list(normalize_columns_in_chart(read_seating_chart(seat_file)))
+    return dict(normalize_columns_in_chart(read_seating_chart(seat_file)))
+
+def get_direction_dictionary(chart):
+    ident = lambda c: c[1].row_identifier
+    by_row = {x : tuple(y) for x, y in groupby(sorted(chart.items(), key=ident), key=ident)}
+    direct = defaultdict(lambda: defaultdict(lambda: unknown))
+    for email in chart:
+        location = chart[email]
+        row_id = location.row_identifier
+        if row_id == (unknown, unknown):
+            continue
+        alternatives = by_row[row_id]
+        col_to_search = location.column
+        for x in alternatives:
+            relation = x[1].column.relation(col_to_search)
+            if relation.sideways:
+                direct[relation.direction_for][email] = x[0]
+        for y_direction in (1, -1):
+            modified_row_id = (row_id[0], row_id[1] + y_direction)
+            if modified_row_id not in by_row:
+                continue
+            altern_row = by_row[modified_row_id]
+            val = location.column.closest(x[1].column for x in altern_row)
+            direct[Direction((0, y_direction))][email] = altern_row[val][0]
+    return direct
