@@ -3,7 +3,7 @@ Tests for various modules.
 """
 from unittest import TestCase, main
 
-from seating_chart import SeatingChart
+from seating_chart import SeatingChart, Location
 from constants import DATA_DIR
 
 class TestSeatingChart(TestCase):
@@ -25,6 +25,17 @@ class TestSeatingChart(TestCase):
             for adj_email in self.chart.sideways_items(email):
                 adj_adj_email = self.chart.sideways_items(adj_email)
                 self.assertTrue(email in adj_adj_email, str((email, adj_email)))
+
+class TestLocation(TestCase):
+    """
+    Tests facets of the location parsing system
+    """
+    def test_basic_format(self):
+        """
+        Tests that the (LETTER:ROW)(NUMBER:COLUMN) format is preserved.
+        """
+        self.assertEqual(Location('room', row=3, column=2), Location.create_location("room", "D2"))
+        self.assertEqual(Location('room', row=0, column=12), Location.create_location("room", "A12"))
 
 if __name__ == '__main__':
     main()
