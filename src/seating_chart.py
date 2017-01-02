@@ -38,6 +38,9 @@ class Column:
             return ColumnRelation.LEFT
         return ColumnRelation.DOES_NOT_EXIST
     def closest(self, others):
+        """
+        Gets the index of the closest value in OTHERS to this one by location.
+        """
         arg = argmin([abs(self.location - other.location) for other in others])
         return arg
     @property
@@ -79,6 +82,11 @@ class ColumnRelation(Enum):
         return self == ColumnRelation.LEFT or self == ColumnRelation.RIGHT
     @property
     def direction_for(self):
+        """
+        Get the direction for the given column relation.
+
+        Only defined when sideways is true.
+        """
         if self == ColumnRelation.LEFT:
             return Direction.LEFT
         elif self == ColumnRelation.RIGHT:
@@ -229,6 +237,11 @@ def get_seating_chart(seat_file):
     return dict(normalize_columns_in_chart(read_seating_chart(seat_file)))
 
 def get_direction_dictionary(chart):
+    """
+    Takes in a seating chart dictionary EMAIL -> LOCATION
+
+    Returns a lookup table dictionary EMAIL -> DIRECTION -> EMAIL of the person in that direction.
+    """
     ident = lambda c: c[1].row_identifier
     by_row = {x : tuple(y) for x, y in groupby(sorted(chart.items(), key=ident), key=ident)}
     direct = defaultdict(lambda: defaultdict(lambda: unknown))
@@ -239,10 +252,10 @@ def get_direction_dictionary(chart):
             continue
         alternatives = by_row[row_id]
         col_to_search = location.column
-        for x in alternatives:
-            relation = x[1].column.relation(col_to_search)
+        for in_row in alternatives:
+            relation = in_row[1].column.relation(col_to_search)
             if relation.sideways:
-                direct[relation.direction_for][email] = x[0]
+                direct[relation.direction_for][email] = in_row[0]
         for y_direction in (1, -1):
             modified_row_id = (row_id[0], row_id[1] + y_direction)
             if modified_row_id not in by_row:
