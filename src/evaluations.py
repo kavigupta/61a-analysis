@@ -11,8 +11,9 @@ class GradedMidterm:
     """
     A set of questions for a given individual
     """
-    def __init__(self, name, *evals):
+    def __init__(self, name, email, *evals):
         self.name = name
+        self.email = email
         self.scores = [x.score for x in evals]
         self.rubrics_per_question = [x.rubric_items for x in evals]
         self.adjustments = [x.adjustment for x in evals]
@@ -20,7 +21,7 @@ class GradedMidterm:
         self.graders = [x.grader for x in evals]
         self.evals = evals
     def __repr__(self):
-        return "GradedMidterm(%r, %s)" % (self.name, ", ".join(repr(x) for x in self.evals))
+        return "GradedMidterm(%r, %r, %s)" % (self.name, self.email, ", ".join(repr(x) for x in self.evals))
 
 class Evaluation:
     """
@@ -47,6 +48,7 @@ def read_evaluation_csv(csv_file):
         csvlines = list(csv.reader(fil))
     header, *rows = csvlines
     assert header[1] == "Name"
+    assert header[3] == "Email"
     assert header[4] == "Score"
     assert header[-3:] == ["Adjustment", "Comments", "Grader"]
     for run_id, row in enumerate(rows):
@@ -54,7 +56,7 @@ def read_evaluation_csv(csv_file):
             break
         rubric_items = [RUBRIC_ITEMS[x] for x in row[5:-3]]
         adjustment = float(row[-3]) if row[-3] != '' else 0
-        yield (run_id, row[1]), \
+        yield (run_id, row[1], row[3]), \
                 Evaluation(float(row[4]), rubric_items, adjustment, row[-2], row[-1])
 
 def proc_evaluations(evaluations):
@@ -73,8 +75,8 @@ def proc_evaluations(evaluations):
         evals.append(current)
     merged = {}
     for key in keys:
-        identity, name = key
-        merged[identity] = GradedMidterm(name, *[x[key] for x in evals])
+        identity, name, email = key
+        merged[identity] = GradedMidterm(name, email, *[x[key] for x in evals])
     system('rm -r {}'.format(extracted))
     return merged
 
