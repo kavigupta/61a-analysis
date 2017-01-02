@@ -14,6 +14,14 @@ from enum import Enum
 
 from numpy import argmin
 
+class SeatingChart:
+    def __init__(self, file_loc):
+        self.__file_loc = file_loc
+        self.__seating_chart = _get_seating_chart(file_loc)
+        self.__adjacency = _get_direction_dictionary(self.__seating_chart)
+    def __repr__(self):
+        return "SeatingChart({!r})".format(self.__file_loc)
+
 class Column:
     """
     Represents a column, along with bounds on that particular row's values to normalize comparisons
