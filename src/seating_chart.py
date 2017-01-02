@@ -263,12 +263,12 @@ def _get_direction_dictionary(chart):
         for in_row in alternatives:
             relation = in_row[1].column.relation(col_to_search)
             if relation.sideways:
-                direct[relation.direction_for][email] = in_row[0]
+                direct[email][relation.direction_for] = in_row[0]
         for y_direction in (1, -1):
             modified_row_id = (row_id[0], row_id[1] + y_direction)
             if modified_row_id not in by_row:
                 continue
             altern_row = by_row[modified_row_id]
             val = location.column.closest(x[1].column for x in altern_row)
-            direct[Direction((0, y_direction))][email] = altern_row[val][0]
+            direct[email][Direction((0, y_direction))] = altern_row[val][0]
     return direct
