@@ -21,7 +21,8 @@ class GradedMidterm:
         self.graders = [x.grader for x in evals]
         self.evals = evals
     def __repr__(self):
-        return "GradedMidterm(%r, %r, %s)" % (self.name, self.email, ", ".join(repr(x) for x in self.evals))
+        evaluations = ", ".join(repr(x) for x in self.evals)
+        return "GradedMidterm(%r, %r, %s)" % (self.name, self.email, evaluations)
 
 class Evaluation:
     """
