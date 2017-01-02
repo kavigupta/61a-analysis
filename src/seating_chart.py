@@ -196,6 +196,8 @@ class Location(AbstractLocation):
         if isinstance(other, UnknownLocation):
             return False
         return (self.room, self.row, self.column) < (other.room, other.row, other.column)
+    def __eq__(self, other):
+        return not self < other and not other < self
     @property
     def room(self):
         return self.__room
