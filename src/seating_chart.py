@@ -21,6 +21,21 @@ class SeatingChart:
         self.__adjacency = _get_direction_dictionary(self.__seating_chart)
     def __repr__(self):
         return "SeatingChart({!r})".format(self.__file_loc)
+    def adjacent_to(self, email):
+        """
+        Gets all people adjacent to the given person.
+        """
+        return list(self.__adjacency[email].values())
+    def sideways_items(self, email):
+        """
+        Get the items sideways of the given email.
+        """
+        for direction, adj_email in self.__adjacency[email].items():
+            if direction.is_sideways:
+                yield adj_email
+    @property
+    def emails(self):
+        return self.__seating_chart.keys()
 
 class Column:
     """
@@ -37,7 +52,7 @@ class Column:
         Get the relationship between our current column and another one
         """
         basis = min((self.range, other.range))
-        sloc, oloc = self.location * basis, other.location * basis
+        sloc, oloc = round(self.location * basis), round(other.location * basis)
         if sloc == oloc:
             return ColumnRelation.ALIGNED
         if sloc == oloc + 1:
@@ -73,6 +88,9 @@ class Direction(Enum):
     RIGHT = (1, 0)
     DOWN = (0, -1)
     UPWARDS = (0, 1)
+    @property
+    def is_sideways(self):
+        return self in (Direction.LEFT, Direction.RIGHT)
 
 class ColumnRelation(Enum):
     """
