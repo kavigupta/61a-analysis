@@ -21,6 +21,9 @@ class Column:
     def __repr__(self):
         return "Column(val={}, cmin={}, cmax={})".format(self.val, self.cmin, self.cmax)
     def relation(self, other):
+        """
+        Get the relationship between our current column and another one
+        """
         basis = min((self.range, other.range))
         sloc, oloc = self.location * basis, other.location * basis
         if sloc == oloc:
@@ -32,18 +35,31 @@ class Column:
         return ColumnRelation.DOES_NOT_EXIST
     @property
     def range(self):
+        """
+        The number of possible seats total
+        """
         return self.cmax - self.cmin
     @property
     def location(self):
+        """
+        A rational in [0, 1] representing an abstract concept of horizontal location (percentage
+            left to right)
+        """
         return (self.val - self.cmin) / (self.cmax - self.cmin)
 
 class ColumnRelation(Enum):
+    """
+    Represents relationship between column positions.
+    """
     LEFT = -1
     RIGHT = 1
     ALIGNED = 0
     DOES_NOT_EXIST = None
     @property
     def sideways(self):
+        """
+        If it's rightwards or leftwards, not aligned or nonexistant
+        """
         return self == ColumnRelation.LEFT or self == ColumnRelation.RIGHT
 
 class AbstractLocation(metaclass=ABCMeta):
