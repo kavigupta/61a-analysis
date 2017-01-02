@@ -177,7 +177,7 @@ class Location(AbstractLocation):
         """
         match = re.search(r"([A-Za-z])([0-9]+)", seat)
         if match:
-            return Location(room, int(match.group(2)), ord(match.group(1)) - ord('A'))
+            return Location(room, row=ord(match.group(1)) - ord('A'), column=int(match.group(2)))
         match = re.search(r"Row (\d+), Table ([A-Z]+), Seat ([i]+)", seat)
         if match:
             roman = {"i" : 1, "ii" : 2, "iii" : 3, "iv" : 4}[match.group(3)]
