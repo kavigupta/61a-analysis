@@ -10,7 +10,7 @@ class TestSeatingChart(TestCase):
     """
     Tests seating charts
     """
-    chart = SeatingChart('{}/real-data/final_seats.csv'.format(DATA_DIR))
+    chart = SeatingChart('{}/real-data/mt1_seats.csv'.format(DATA_DIR))
     def test_exist_emails(self):
         """
         Test that the emails all exist and are strings.
