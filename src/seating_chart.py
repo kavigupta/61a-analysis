@@ -15,6 +15,9 @@ from enum import Enum
 from numpy import argmin
 
 class SeatingChart:
+    """
+    Represents a graph of student seating locations.
+    """
     def __init__(self, file_loc):
         self.__file_loc = file_loc
         self.__seating_chart = _get_seating_chart(file_loc)
@@ -35,6 +38,9 @@ class SeatingChart:
                 yield adj_email
     @property
     def emails(self):
+        """
+        The entire set of vertices in this graph, which are emails.
+        """
         return self.__seating_chart.keys()
 
 class Column:
@@ -90,6 +96,9 @@ class Direction(Enum):
     UPWARDS = (0, 1)
     @property
     def is_sideways(self):
+        """
+        Whether a direction is left or right.
+        """
         return self in (Direction.LEFT, Direction.RIGHT)
 
 class ColumnRelation(Enum):
