@@ -6,7 +6,18 @@ from os import listdir
 import csv
 
 from constants import DATA_DIR
-from tools import flatten
+
+class GradedMidterm:
+    def __init__(self, name, *evals):
+        self.name = name
+        self.scores = [x.score for x in evals]
+        self.rubrics_per_question = [x.rubric_items for x in evals]
+        self.adjustments = [x.adjustment for x in evals]
+        self.comments = [x.comments for x in evals]
+        self.graders = [x.grader for x in evals]
+        self.evals = evals
+    def __repr__(self):
+        return "GradedMidterm(%r, %s)" % (self.name, ", ".join(repr(x) for x in self.evals))
 
 class Evaluation:
     """
@@ -21,19 +32,7 @@ class Evaluation:
         self.grader = grader
     def __repr__(self):
         tupled = (self.score, self.rubric_items, self.adjustment, self.comments, self.grader)
-        return ("Evaluation(" + ", ".join(["{}"] * 4) + ")").format(*(repr(x) for x in tupled))
-    @staticmethod
-    def merged(evals):
-        """
-        Merges the provided sequence of evaluations by concatenating every list inside it.
-        """
-        evals = list(evals)
-        return Evaluation(
-            flatten(x.score for x in evals),
-            flatten(x.rubric_items for x in evals),
-            flatten(x.adjustment for x in evals),
-            flatten(x.comments for x in evals),
-            flatten(x.grader for x in evals))
+        return ("Evaluation(" + ", ".join(["{}"] * 5) + ")").format(*(repr(x) for x in tupled))
 
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}
 
@@ -51,7 +50,7 @@ def read_evaluation_csv(csv_file):
         rubric_items = [RUBRIC_ITEMS[x] for x in row[5:-3]]
         adjustment = float(row[-3]) if row[-3] != '' else 0
         yield (run_id, row[1]), \
-                Evaluation([float(row[4])], [rubric_items], [adjustment], [row[-2]], [row[-1]])
+                Evaluation(float(row[4]), rubric_items, adjustment, row[-2], row[-1])
 
 def proc_evaluations(evaluations):
     """
@@ -69,7 +68,8 @@ def proc_evaluations(evaluations):
         evals.append(current)
     merged = {}
     for key in keys:
-        merged[key] = Evaluation.merged(x[key] for x in evals)
+        identity, name = key
+        merged[identity] = GradedMidterm(name, *[x[key] for x in evals])
     system('rm -r {}'.format(extracted))
     return merged
 
