@@ -4,6 +4,9 @@ Handles the reading and processing of seating charts.
 import re
 import csv
 
+from functools import total_ordering
+
+@total_ordering
 class Location:
     """
     A location at which a student takes an exam
@@ -26,14 +29,31 @@ class Location:
             return Location(room, int(match.group(1)), (ord(match.group(2)) - ord('A'), roman))
         match = re.search(r"N/A|FALSE", seat)
         if match:
-            return None
+            return unknown
         match = re.search(r"(Front|Desk).*", seat)
         if match:
-            return None # TODO handle these better
+            return unknown # TODO handle these better
         print(seat)
         raise RuntimeError(seat)
     def __repr__(self):
         return "Location(room={!r}, row={!r}, column={!r})".format(self.room, self.row, self.column)
+    def __lt__(self, other):
+        if isinstance(other, UnknownLocation):
+            return False
+        return (self.room, self.row, self.column) < (other.room, other.row, other.column)
+
+@total_ordering
+class UnknownLocation:
+    """
+    A location which is unknown
+    """
+    def __lt__(self, other):
+        if isinstance(other, UnknownLocation):
+            return False
+        return True
+    def __repr__(self):
+        return "unknown"
+unknown = UnknownLocation()
 
 def read_seating_chart(seat_file):
     """
