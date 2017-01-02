@@ -7,6 +7,8 @@ import csv
 from functools import total_ordering
 from itertools import groupby
 
+from abc import ABCMeta, abstractmethod
+
 class Column:
     """
     Represents a column, along with bounds on that particular row's values to normalize comparisons
@@ -18,15 +20,47 @@ class Column:
     def __repr__(self):
         return "Column(val={}, cmin={}, cmax={})".format(self.val, self.cmin, self.cmax)
 
+class AbstractLocation(metaclass=ABCMeta):
+    """
+    Describes the abstract concept of a location, which might be known or unknown
+    """
+    @property
+    def row_identifier(self):
+        """
+        Globally unique identifier per row
+        """
+        return self.room, self.row
+    @property
+    @abstractmethod
+    def room(self):
+        """
+        The current room
+        """
+        pass
+    @property
+    @abstractmethod
+    def row(self):
+        """
+        The current rows
+        """
+        pass
+    @property
+    @abstractmethod
+    def column(self):
+        """
+        The current column
+        """
+        pass
+
 @total_ordering
-class Location:
+class Location(AbstractLocation):
     """
     A location at which a student takes an exam
     """
     def __init__(self, room, row, column):
-        self.room = room
-        self.row = row
-        self.column = column
+        self.__room = room
+        self.__row = row
+        self.__column = column
     @staticmethod
     def create_location(room, seat):
         """
@@ -54,14 +88,17 @@ class Location:
             return False
         return (self.room, self.row, self.column) < (other.room, other.row, other.column)
     @property
-    def row_identifier(self):
-        """
-        Globally unique identifier per row
-        """
-        return self.room, self.row
+    def room(self):
+        return self.__room
+    @property
+    def row(self):
+        return self.__row
+    @property
+    def column(self):
+        return self.__column
 
 @total_ordering
-class UnknownLocation:
+class UnknownLocation(AbstractLocation):
     """
     A location which is unknown
     """
@@ -71,6 +108,15 @@ class UnknownLocation:
         return True
     def __repr__(self):
         return "unknown"
+    @property
+    def row(self):
+        return unknown
+    @property
+    def column(self):
+        return unknown
+    @property
+    def room(self):
+        return unknown
 unknown = UnknownLocation()
 
 def read_seating_chart(seat_file):
