@@ -195,7 +195,7 @@ class UnknownLocation(AbstractLocation):
         return False
 unknown = UnknownLocation()
 
-def read_seating_chart(seat_file):
+def __read_seating_chart(seat_file):
     """
     Reads a seating chart from a file
     """
@@ -206,7 +206,7 @@ def read_seating_chart(seat_file):
     room_loc = data[0].index("Room")
     return [(x[email_loc], Location.create_location(x[room_loc], x[seat_loc])) for x in data[1:]]
 
-def normalize_columns_in_chart(seating_chart):
+def __normalize_columns_in_chart(seating_chart):
     """
     Converts tuple columns into single numbers. Sets up minima and maxima for each column and places
         everything into Column objects.
@@ -230,13 +230,13 @@ def normalize_columns_in_chart(seating_chart):
             bounded_col = Column(adjusted_col, min_of_current, max_of_current)
             yield email, Location(loc.room, loc.row, bounded_col)
 
-def get_seating_chart(seat_file):
+def _get_seating_chart(seat_file):
     """
     Performs process of getting a seating chart from a file and normalizing the columns.
     """
-    return dict(normalize_columns_in_chart(read_seating_chart(seat_file)))
+    return dict(__normalize_columns_in_chart(__read_seating_chart(seat_file)))
 
-def get_direction_dictionary(chart):
+def _get_direction_dictionary(chart):
     """
     Takes in a seating chart dictionary EMAIL -> LOCATION
 
