@@ -41,8 +41,8 @@ class ScoredQuestion:
         self.comments = comments
         self.grader = grader
     def __repr__(self):
-        tupled = (self.score, self.rubric_items, self.adjustment, self.comments, self.grader)
-        return ("ScoredQuestion(" + ", ".join(["{}"] * 6) + ")").format(*(repr(x) for x in tupled))
+        tupled = (self.score, self.email, self.rubric_items, self.adjustment, self.comments, self.grader)
+        return ("ScoredQuestion(" + ", ".join(["{!r}"] * 6) + ")").format(*tupled)
     def zero_mean(self, mean):
         m_score, m_rubric, m_adj = mean
         return ScoredQuestion(
