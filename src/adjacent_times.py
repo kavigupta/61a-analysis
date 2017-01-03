@@ -1,7 +1,7 @@
 """
 Find adjacently graded exams in a graded exam dictionary.
 """
-from evaluations import GradedMidterm
+from evaluations import Evaluation
 
 def find_adjacent_times(graded_exams):
     """
@@ -16,7 +16,7 @@ def find_adjacent_times(graded_exams):
         for prev, curr in zip(exam_list, exam_list[1:]):
             prev_q, curr_q = prev.evals[question], curr.evals[question]
             if prev_q.grader == curr_q.grader:
-                prev_grade = GradedMidterm(prev.name, prev.email, prev_q)
-                curr_grade = GradedMidterm(curr.name, curr.email, curr_q)
+                prev_grade = Evaluation(prev.name, prev.email, prev_q)
+                curr_grade = Evaluation(curr.name, curr.email, curr_q)
                 adjacents.append((prev_grade, curr_grade))
         yield adjacents

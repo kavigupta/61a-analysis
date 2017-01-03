@@ -7,7 +7,7 @@ import csv
 
 from constants import DATA_DIR
 
-class GradedMidterm:
+class Evaluation:
     """
     A set of questions for a given individual
     """
@@ -22,7 +22,7 @@ class GradedMidterm:
         self.evals = evals
     def __repr__(self):
         evaluations = ", ".join(repr(x) for x in self.evals)
-        return "GradedMidterm(%r, %r, %s)" % (self.name, self.email, evaluations)
+        return "Evaluation(%r, %r, %s)" % (self.name, self.email, evaluations)
 
 class Evaluation:
     """
@@ -77,7 +77,7 @@ def proc_evaluations(evaluations):
     merged = {}
     for key in keys:
         identity, name, email = key
-        merged[identity] = GradedMidterm(name, email, *[x[key] for x in evals])
+        merged[identity] = Evaluation(name, email, *[x[key] for x in evals])
     system('rm -r {}'.format(extracted))
     return merged
 
