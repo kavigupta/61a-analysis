@@ -5,6 +5,8 @@ from os import system
 from os import listdir
 import csv
 
+from graded_exam import ExamGrades
+
 from constants import DATA_DIR
 
 class Evaluation:
@@ -84,13 +86,16 @@ def proc_evaluations(evaluations):
     evals = []
     keys = set()
     for fil in listdir(loc):
+        problem = float(fil[:fil.index("_")])
         current = dict(read_evaluation_csv(loc + "/" + fil))
         keys.update(current.keys())
-        evals.append(current)
+        evals.append((problem, current))
+    evals.sort()
+    problems = [x for x, _ in evals]
     merged = {}
     for key in keys:
         identity, name, email = key
-        merged[identity] = Evaluation(name, email, *[x[key] for x in evals])
+        merged[identity] = Evaluation(name, email, *[x[key] for _, x in evals])
     system('rm -r {}'.format(extracted))
-    return merged
+    return ExamGrades.create(problems, merged)
 
