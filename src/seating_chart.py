@@ -29,6 +29,15 @@ class SeatingChart:
         Gets all people adjacent to the given person.
         """
         return list(self.__adjacency[email].values())
+    def are_adjacent(self, first, second):
+        """
+        Checks whether FIRST and SECOND are adjacent.
+        """
+        return first in self.adjacent_to(second) or second in self.adjacent_to(first)
+    def same_room(self, first, second):
+        if first not in self.__seating_chart or  second not in self.__seating_chart:
+            return None
+        return self.__seating_chart[first].room == self.__seating_chart[second].room
     def sideways_items(self, email):
         """
         Get the items sideways of the given email.
