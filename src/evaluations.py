@@ -26,7 +26,12 @@ class Evaluation:
         evaluations = ", ".join(repr(x) for x in self.evals)
         return "Evaluation(%r, %r, %s)" % (self.name, self.email, evaluations)
     def zero_mean(self, means):
-        return Evaluation(self.name, self.email, *[x.zero_mean(y) for x, y in zip(self.evals, means)])
+        """
+        Subtract out the given means : iterable of (score, rubric, adjustment) from each scored
+            question.
+        """
+        return Evaluation(self.name, self.email,
+                          *[x.zero_mean(y) for x, y in zip(self.evals, means)])
 
 class ScoredQuestion:
     """
@@ -41,9 +46,14 @@ class ScoredQuestion:
         self.comments = comments
         self.grader = grader
     def __repr__(self):
-        tupled = (self.score, self.email, self.rubric_items, self.adjustment, self.comments, self.grader)
+        tupled = (self.score, self.email,
+                  self.rubric_items, self.adjustment,
+                  self.comments, self.grader)
         return ("ScoredQuestion(" + ", ".join(["{!r}"] * 6) + ")").format(*tupled)
     def zero_mean(self, mean):
+        """
+        Removed the score in each case.
+        """
         m_score, m_rubric, m_adj = mean
         return ScoredQuestion(
             self.email,
