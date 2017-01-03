@@ -23,6 +23,8 @@ class Evaluation:
     def __repr__(self):
         evaluations = ", ".join(repr(x) for x in self.evals)
         return "Evaluation(%r, %r, %s)" % (self.name, self.email, evaluations)
+    def zero_mean(self, means):
+        return Evaluation(self.name, self.email, *[x.zero_mean(y) for x, y in zip(self.evals, means)])
 
 class ScoredQuestion:
     """
@@ -39,6 +41,15 @@ class ScoredQuestion:
     def __repr__(self):
         tupled = (self.score, self.rubric_items, self.adjustment, self.comments, self.grader)
         return ("ScoredQuestion(" + ", ".join(["{}"] * 6) + ")").format(*(repr(x) for x in tupled))
+    def zero_mean(self, mean):
+        m_score, m_rubric, m_adj = mean
+        return ScoredQuestion(
+            self.email,
+            self.score - m_score,
+            [x - y for x, y in zip(self.rubric_items, m_rubric)],
+            self.adjustment - m_adj,
+            self.comments,
+            self.grader)
 
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}
 
