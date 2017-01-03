@@ -29,7 +29,8 @@ class ScoredQuestion:
     A data structure used for representing an evaluation, or a set of scores for a particular
         individual on a particular exam.
     """
-    def __init__(self, score, rubric_items, adjustment, comments, grader):
+    def __init__(self, email, score, rubric_items, adjustment, comments, grader):
+        self.email = email
         self.score = score
         self.rubric_items = rubric_items
         self.adjustment = adjustment
@@ -37,7 +38,7 @@ class ScoredQuestion:
         self.grader = grader
     def __repr__(self):
         tupled = (self.score, self.rubric_items, self.adjustment, self.comments, self.grader)
-        return ("ScoredQuestion(" + ", ".join(["{}"] * 5) + ")").format(*(repr(x) for x in tupled))
+        return ("ScoredQuestion(" + ", ".join(["{}"] * 6) + ")").format(*(repr(x) for x in tupled))
 
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}
 
@@ -58,7 +59,8 @@ def read_evaluation_csv(csv_file):
         rubric_items = [RUBRIC_ITEMS[x] for x in row[5:-3]]
         adjustment = float(row[-3]) if row[-3] != '' else 0
         yield (run_id, row[1], row[3]), \
-                ScoredQuestion(float(row[4]), rubric_items, adjustment, row[-2], row[-1])
+                ScoredQuestion(row[3], float(row[4]), rubric_items, adjustment, row[-2], row[-1])
+
 
 def proc_evaluations(evaluations):
     """
