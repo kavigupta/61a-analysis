@@ -35,6 +35,9 @@ class SeatingChart:
         """
         return first in self.adjacent_to(second) or second in self.adjacent_to(first)
     def same_room(self, first, second):
+        """
+        Returns whether FIRST and SECOND are in the same room.
+        """
         if first not in self.__seating_chart or  second not in self.__seating_chart:
             return None
         return self.room_for(first) == self.room_for(second)
@@ -52,6 +55,9 @@ class SeatingChart:
         """
         return self.__seating_chart.keys()
     def room_for(self, email):
+        """
+        Gets the room in which the person with that email lies.
+        """
         return self.__seating_chart[email].room
 
 class Column:

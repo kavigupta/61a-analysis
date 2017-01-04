@@ -40,12 +40,18 @@ class Evaluation:
         return np.sum(self.__norm_vec * other.__norm_vec) # pylint: disable=W0212
 
 class QuestionScore:
+    """
+    A typed vector consisting of a score, a list of rubric items, and a point adjustment.
+    """
     def __init__(self, score, rubric_items, adjustment):
         self.__score = score
         self.__rubric_items = rubric_items
         self.__adjustment = adjustment
     @property
     def rubric_items(self):
+        """
+        Get a list of rubric items.
+        """
         return self.__rubric_items
     def __repr__(self):
         return "QuestionScore({!r}, {!r}, {!r})".format(
@@ -110,6 +116,9 @@ class ScoredQuestion:
             self.grader)
     @property
     def rubric_items(self):
+        """
+        Gets a list of rubric items.
+        """
         return self.complete_score.rubric_items
 
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}

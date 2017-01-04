@@ -8,6 +8,10 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 def permutation_test(partition, summary, number):
+    """
+    Checks whether the differences in the SUMMARY statistic over the two PARITIONs of the data are
+        real or merely the result of random chance. Takes NUMBER samples.
+    """
     value = summary(partition.group_A, partition.group_B)
     distribution = [summary(a, b) for a, b in permute(partition.group_A, partition.group_B, number)]
     n_greater = len([x for x in distribution if x > value])
@@ -16,11 +20,17 @@ def permutation_test(partition, summary, number):
     return PermutationReport(value, distribution, p_value)
 
 class PermutationReport:
+    """
+    Represents a report to be delivered about a permutation test.
+    """
     def __init__(self, value, distribution, p_value):
         self.__val = value
         self.__distr = distribution
         self.__p = p_value
     def report(self, title=None):
+        """
+        Perform the report.
+        """
         if all(np.isnan(self.__distr)): # pylint: disable=E1101
             return
         plt.hist(self.__distr)
@@ -33,11 +43,18 @@ class PermutationReport:
         plt.show()
 
 class Partition:
+    """
+    A partition of a set of data into two groups.
+    """
     def __init__(self, group_A, group_B):
         self.group_A = group_A
         self.group_B = group_B
     @staticmethod
     def partition(population, decision):
+        """
+        Partitions POPULATION into two groups A and B with the given decision function. Values x for
+            which DECISION(x) is truthy, then it is placed in A and it is placed in B otherwise.
+        """
         return Partition([x for x in population if decision(x)],
                          [x for x in population if not decision(x)])
 
