@@ -4,32 +4,12 @@ A module containing a variety of functions for analyzing the data. This is suppo
 """
 import numpy as np
 
-def unusualness(grader, question):
-    """
-    Get the unusualness of a grader with respect to a graded question; i.e., the average of the
-        z scores from the overall mean for each rubric item.
-    """
-    overall_mean = question.mean_score
-    overall_std = question.std_score
-    by_grader = question.for_grader(grader)
-    return np.mean((np.abs(by_grader.mean_score - overall_mean) / overall_std).rubric_items)
-
-def identify_problematic_ranges(evals, z_thresh):
-    """
-    Ouptuts an iterable of emails for which at least one grader had an unusualness greater than the
-        z threshold.
-    """
-    for _, graded_question in evals:
-        for grader in graded_question.graders:
-            if unusualness(grader, graded_question) > z_thresh:
-                yield from graded_question.for_grader(grader).emails
-
 def compensate_for_grader_means(evals, z_thresh=1):
     """
     Compensates for grader means by subtracting each grader's average grades per problem. Eliminates
         individuals for whom the graders are unusual.
     """
-    problematic = set(identify_problematic_ranges(evals, z_thresh))
+    problematic = set(_identify_problematic_ranges(evals, z_thresh))
     filt = evals.remove(problematic)
     zeroed = filt.zero_meaned()
     return zeroed
@@ -64,3 +44,23 @@ def all_correlations(graded_exam, seating_chart, time_delta):
             space_adjacent = seating_chart.are_adjacent(email_x, email_y)
             same_room = seating_chart.same_room(email_x, email_y)
             yield Correlation(correl, time_adjacent, space_adjacent, same_room)
+
+def _unusualness(grader, question):
+    """
+    Get the unusualness of a grader with respect to a graded question; i.e., the average of the
+        z scores from the overall mean for each rubric item.
+    """
+    overall_mean = question.mean_score
+    overall_std = question.std_score
+    by_grader = question.for_grader(grader)
+    return np.mean((np.abs(by_grader.mean_score - overall_mean) / overall_std).rubric_items)
+
+def _identify_problematic_ranges(evals, z_thresh):
+    """
+    Ouptuts an iterable of emails for which at least one grader had an unusualness greater than the
+        z threshold.
+    """
+    for _, graded_question in evals:
+        for grader in graded_question.graders:
+            if _unusualness(grader, graded_question) > z_thresh:
+                yield from graded_question.for_grader(grader).emails
