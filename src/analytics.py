@@ -19,10 +19,11 @@ def compensate_for_grader_means(evals, z_thresh=1):
     return zeroed
 
 class Correlation:
-    def __init__(self, correlation, are_time_adjacent, are_space_adjacent):
+    def __init__(self, correlation, are_time_adjacent, are_space_adjacent, are_same_room):
         self.are_time_adjacent = are_time_adjacent
         self.correlation = correlation
         self.are_space_adjacent = are_space_adjacent
+        self.are_same_room = are_same_room
 
 def all_correlations(graded_exam, seating_chart, time_delta):
     emails = list(graded_exam.emails)
@@ -39,4 +40,5 @@ def all_correlations(graded_exam, seating_chart, time_delta):
             time_adjacent = abs(graded_exam.time_diff(email_x, email_y)) <= time_delta
             correl = eval_x.correlation(eval_y)
             space_adjacent = seating_chart.are_adjacent(email_x, email_y)
-            yield Correlation(correl, time_adjacent, space_adjacent)
+            same_room = seating_chart.same_room(email_x, email_y)
+            yield Correlation(correl, time_adjacent, space_adjacent, same_room)
