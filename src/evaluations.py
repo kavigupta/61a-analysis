@@ -123,7 +123,7 @@ class ScoredQuestion:
 
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}
 
-def read_evaluation_csv(csv_file):
+def _read_evaluation_csv(csv_file):
     """
     Reads in a CSV as an evaluation. Format specified by assertions.
     """
@@ -158,7 +158,7 @@ def proc_evaluations(evaluations):
     keys = set()
     for fil in listdir(loc):
         problem = float(fil[:fil.index("_")])
-        current = dict(read_evaluation_csv(loc + "/" + fil))
+        current = dict(_read_evaluation_csv(loc + "/" + fil))
         keys.update(current.keys())
         evals.append((problem, current))
     evals.sort()
