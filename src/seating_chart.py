@@ -37,7 +37,7 @@ class SeatingChart:
     def same_room(self, first, second):
         if first not in self.__seating_chart or  second not in self.__seating_chart:
             return None
-        return self.__seating_chart[first].room == self.__seating_chart[second].room
+        return self.room_for(first) == self.room_for(second)
     def sideways_items(self, email):
         """
         Get the items sideways of the given email.
@@ -51,6 +51,8 @@ class SeatingChart:
         The entire set of vertices in this graph, which are emails.
         """
         return self.__seating_chart.keys()
+    def room_for(self, email):
+        return self.__seating_chart[email].room
 
 class Column:
     """
