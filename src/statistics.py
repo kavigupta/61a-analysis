@@ -21,7 +21,7 @@ class PermutationReport:
         self.__distr = distribution
         self.__p = p_value
     def report(self, title=None):
-        if all(np.isnan(self.__distr)):
+        if all(np.isnan(self.__distr)): # pylint: disable=E1101
             return
         plt.hist(self.__distr)
         plt.axvline(self.__val)
