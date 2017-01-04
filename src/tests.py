@@ -5,6 +5,32 @@ from unittest import TestCase, main
 
 from seating_chart import SeatingChart, Location
 from constants import DATA_DIR
+from evaluations import proc_evaluations
+from analytics import compensate_for_grader_means
+
+from numpy.testing import assert_almost_equal as aae
+
+EVALS_SAMPLE = proc_evaluations('data/test-evals.zip')
+
+class TestAnalytics(TestCase):
+    """
+    Test suite for analytics.py.
+    """
+    def test_compensate_for_grader_means(self):
+        """
+        Tests the compensate_for_grader_means function (only the compensation, not the filtering)
+            by running it on a sample and testing two individuals to check that they were adjusted
+            appropriately.
+        """
+        compensated = compensate_for_grader_means(EVALS_SAMPLE, 1000)
+        q_eval = compensated.evaluation_for('Q@berkeley.edu').evals
+        aae(+0.625, q_eval[0].complete_score.score)
+        aae(+1.000, q_eval[1].complete_score.score)
+        aae(-0.500, q_eval[2].complete_score.score)
+        p_eval = compensated.evaluation_for("P@berkeley.edu").evals
+        aae(+2-3.5/3, p_eval[0].complete_score.score)
+        aae(+0.300, p_eval[1].complete_score.score)
+        aae(-0.500, p_eval[2].complete_score.score)
 
 class TestSeatingChart(TestCase):
     """
