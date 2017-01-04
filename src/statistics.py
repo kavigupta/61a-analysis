@@ -12,8 +12,8 @@ def permutation_test(partition, summary, number):
     Checks whether the differences in the SUMMARY statistic over the two PARITIONs of the data are
         real or merely the result of random chance. Takes NUMBER samples.
     """
-    value = summary(partition.group_A, partition.group_B)
-    distribution = [summary(a, b) for a, b in permute(partition.group_A, partition.group_B, number)]
+    value = summary(partition.group_a, partition.group_b)
+    distribution = [summary(a, b) for a, b in _permute(partition.group_a, partition.group_b, number)]
     n_greater = len([x for x in distribution if x > value])
     n_smaller = len([x for x in distribution if x > value])
     p_value = (1 + min(n_greater, n_smaller)) * 2 / (1 + number)
@@ -46,9 +46,9 @@ class Partition:
     """
     A partition of a set of data into two groups.
     """
-    def __init__(self, group_A, group_B):
-        self.group_A = group_A
-        self.group_B = group_B
+    def __init__(self, group_a, group_b):
+        self.group_a = group_a
+        self.group_b = group_b
     @staticmethod
     def partition(population, decision):
         """
@@ -58,7 +58,7 @@ class Partition:
         return Partition([x for x in population if decision(x)],
                          [x for x in population if not decision(x)])
 
-def permute(sample_a, sample_b, number):
+def _permute(sample_a, sample_b, number):
     combined = list(sample_a) + list(sample_b)
     for _ in range(number):
         print("*", end="")
