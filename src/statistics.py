@@ -49,7 +49,8 @@ class PermutationReport:
         """
         return self.__p
 
-class Partition: # plyint: disable=R0903
+
+class Partition: # pylint: disable=R0903
     """
     A partition of a set of data into two groups.
     """
