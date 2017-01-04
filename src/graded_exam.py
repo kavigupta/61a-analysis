@@ -144,3 +144,9 @@ class ExamGrades:
                     yield mpqag[(que, eva.grader)]
             return elem.zero_mean(means())
         return self.__replace(updater)
+    def time_diff(self, email_a, email_b):
+        """
+        Get the difference between the times at which email_a and email_b were processed (in number
+            of exams).
+        """
+        return self.__location_per_email[email_a] - self.__location_per_email[email_b]
