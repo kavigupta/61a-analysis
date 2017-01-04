@@ -17,3 +17,26 @@ def compensate_for_grader_means(evals, z_thresh=1):
     filt = evals.remove(problematic)
     zeroed = filt.zero_meaned()
     return zeroed
+
+class Correlation:
+    def __init__(self, correlation, are_time_adjacent, are_space_adjacent):
+        self.are_time_adjacent = are_time_adjacent
+        self.correlation = correlation
+        self.are_space_adjacent = are_space_adjacent
+
+def all_correlations(graded_exam, seating_chart, time_delta):
+    emails = list(graded_exam.emails)
+    for index_x in range(len(emails)):
+        if index_x % 100 == 0: print(index_x, len(emails))
+        email_x = emails[index_x]
+        if email_x not in graded_exam.emails:
+            continue
+        eval_x = graded_exam.evaluation_for(email_x)
+        for email_y in emails[index_x+1:]:
+            if email_y not in graded_exam.emails:
+                continue
+            eval_y = graded_exam.evaluation_for(email_y)
+            time_adjacent = abs(graded_exam.time_diff(email_x, email_y)) <= time_delta
+            correl = eval_x.correlation(eval_y)
+            space_adjacent = seating_chart.are_adjacent(email_x, email_y)
+            yield Correlation(correl, time_adjacent, space_adjacent)
