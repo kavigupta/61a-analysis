@@ -34,32 +34,20 @@ class ExamQuestion:
         """
         return set(x.grader for x in self.evaluations)
     @property
-    def mean_score(self):
-        """
-        Return the mean score of the given evaluations
-        """
-        return np.mean([x.score for x in self.evaluations])
+    def __scores(self):
+        return [x.complete_score for x in self.evaluations]
     @property
-    def __rubrics(self):
-        return [x.rubric_items for x in self.evaluations]
-    @property
-    def std_rubric(self):
+    def std_score(self):
         """
         Get the standard deviation of the rubrics
         """
-        return np.std(self.__rubrics, axis=0)
+        return np.std(self.__scores)
     @property
-    def mean_rubric(self):
+    def mean_score(self):
         """
         Get the mean of the rubrics
         """
-        return np.mean(self.__rubrics, axis=0)
-    @property
-    def mean_adjustment(self):
-        """
-        Get the mean point adjustment
-        """
-        return np.mean([x.adjustment for x in self.evaluations])
+        return np.mean(self.__scores)
     @property
     def emails(self):
         """
@@ -145,8 +133,7 @@ class ExamGrades:
             for quest, grades in self:
                 for grader in grades.graders:
                     by_grader = grades.for_grader(grader)
-                    yield ((quest, grader),
-                           (by_grader.mean_score, by_grader.mean_rubric, by_grader.mean_adjustment))
+                    yield ((quest, grader), by_grader.mean_score)
         mpqag = dict(mean_per_question_and_grader())
         def updater(elem):
             """

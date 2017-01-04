@@ -9,10 +9,10 @@ def unusualness(grader, question):
     Get the unusualness of a grader with respect to a graded question; i.e., the average of the
         z scores from the overall mean for each rubric item.
     """
-    overall_mean = question.mean_rubric
-    overall_std = question.std_rubric
+    overall_mean = question.mean_score
+    overall_std = question.std_score
     by_grader = question.for_grader(grader)
-    return np.mean(np.abs(by_grader.mean_rubric - overall_mean) / overall_std)
+    return np.mean((np.abs(by_grader.mean_score - overall_mean) / overall_std).rubric_items)
 
 def identify_problematic_ranges(evals, z_thresh):
     """

@@ -39,35 +39,78 @@ class Evaluation:
         """
         return np.sum(self.__norm_vec * other.__norm_vec) # pylint: disable=W0212
 
+class QuestionScore:
+    def __init__(self, score, rubric_items, adjustment):
+        self.__score = score
+        self.__rubric_items = rubric_items
+        self.__adjustment = adjustment
+    @property
+    def rubric_items(self):
+        return self.__rubric_items
+    def __repr__(self):
+        return "QuestionScore({!r}, {!r}, {!r})".format(
+            self.__score, self.__rubric_items, self.__adjustment)
+    def __sub__(self, other):
+        return self + (-1) * other
+    def __add__(self, other):
+        return self.__numeric(other, lambda x, y: x + y)
+    def __radd__(self, other):
+        return self.__numeric(other, lambda x, y: y + x)
+    def __truediv__(self, other):
+        return self.__numeric(other, lambda x, y: x / y)
+    def __mul__(self, other):
+        return self.__numeric(other, lambda x, y: x * y)
+    def __rmul__(self, other):
+        return self.__numeric(other, lambda x, y: y * x)
+    def __abs__(self):
+        return self.__single_numeric(np.abs)
+    def sqrt(self):
+        """
+        Return the square root of this question.
+        """
+        return self.__single_numeric(np.sqrt) # pylint: disable=E1101
+    def __single_numeric(self, func):
+        return QuestionScore(
+            func(self.__score),
+            func(self.__rubric_items),
+            func(self.__adjustment))
+    def __numeric(self, other, func):
+        if isinstance(other, QuestionScore):
+            # pylint: disable=W0212
+            score = func(self.__score, other.__score)
+            rubrics = [func(x, y) for x, y in zip(self.__rubric_items, other.__rubric_items)]
+            adjustment = func(self.__adjustment, other.__adjustment)
+        else:
+            score = func(self.__score, other)
+            rubrics = [func(x, other) for x in self.__rubric_items]
+            adjustment = func(self.__adjustment, other)
+        return QuestionScore(score, rubrics, adjustment)
+
 class ScoredQuestion:
     """
     A data structure used for representing an evaluation, or a set of scores for a particular
         individual on a particular exam.
     """
-    def __init__(self, email, score, rubric_items, adjustment, comments, grader):
+    def __init__(self, email, complete_score, comments, grader):
         self.email = email
-        self.score = score
-        self.rubric_items = rubric_items
-        self.adjustment = adjustment
+        self.complete_score = complete_score
         self.comments = comments
         self.grader = grader
     def __repr__(self):
-        tupled = (self.score, self.email,
-                  self.rubric_items, self.adjustment,
-                  self.comments, self.grader)
-        return ("ScoredQuestion(" + ", ".join(["{!r}"] * 6) + ")").format(*tupled)
+        tupled = (self.email, self.complete_score, self.comments, self.grader)
+        return ("ScoredQuestion(" + ", ".join(["{!r}"] * 4) + ")").format(*tupled)
     def zero_mean(self, mean):
         """
         Removed the score in each case.
         """
-        m_score, m_rubric, m_adj = mean
         return ScoredQuestion(
             self.email,
-            self.score - m_score,
-            [x - y for x, y in zip(self.rubric_items, m_rubric)],
-            self.adjustment - m_adj,
+            self.complete_score - mean,
             self.comments,
             self.grader)
+    @property
+    def rubric_items(self):
+        return self.complete_score.rubric_items
 
 RUBRIC_ITEMS = {'true' : 1, 'false' : 0}
 
@@ -88,7 +131,10 @@ def read_evaluation_csv(csv_file):
         rubric_items = [RUBRIC_ITEMS[x] for x in row[5:-3]]
         adjustment = float(row[-3]) if row[-3] != '' else 0
         yield (run_id, row[1], row[3]), \
-                ScoredQuestion(row[3], float(row[4]), rubric_items, adjustment, row[-2], row[-1])
+                ScoredQuestion(row[3],
+                               QuestionScore(float(row[4]), rubric_items, adjustment),
+                               row[-2],
+                               row[-1])
 
 
 def proc_evaluations(evaluations):
