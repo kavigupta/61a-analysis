@@ -5,6 +5,8 @@ from os import system
 from os import listdir
 import csv
 
+import numpy as np
+
 from graded_exam import ExamGrades
 
 from constants import DATA_DIR
@@ -32,6 +34,15 @@ class Evaluation:
         """
         return Evaluation(self.name, self.email,
                           *[x.zero_mean(y) for x, y in zip(self.evals, means)])
+    @property
+    def __norm_vec(self):
+        all_rubrics = np.array([y for x in self.evals for y in x.rubric_items])
+        return all_rubrics / np.linalg.norm(all_rubrics)
+    def correlation(self, other):
+        """
+        Find the correlation of this and another evaluation
+        """
+        return np.sum(self.__norm_vec * other.__norm_vec) # pylint: disable=W0212
 
 class ScoredQuestion:
     """
