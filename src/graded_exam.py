@@ -1,6 +1,8 @@
 """
 A set of classes for handling graded exams
 """
+from collections import defaultdict
+
 import numpy as np
 
 class ExamQuestion:
@@ -73,6 +75,20 @@ class ExamGrades:
         self.__problem_names = problem_names
         self.__location_per_email = location_per_email
         self.__evaluation_per_email = evaluation_per_email
+    def by_room(self, seating_chart):
+        """
+        Input: seating chart
+        Output: iterable of room name, grades with only emails in that room
+        """
+        by_room = defaultdict(lambda: [])
+        for email in seating_chart.emails:
+            if email not in self.emails:
+                continue
+            current = email, self.__location_per_email[email], self.__evaluation_per_email[email]
+            by_room[seating_chart.room_for(email)].append(current)
+        for room, items in by_room.items():
+            yield room, ExamGrades(self.__problem_names,
+                                   {e : l for e, l, _ in items}, {e : ev for e, _, ev in items})
     @staticmethod
     def create(problem_names, grades_per_index):
         """
