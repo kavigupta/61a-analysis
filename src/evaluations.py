@@ -48,6 +48,9 @@ class QuestionScore:
         self.__rubric_items = rubric_items
         self.__adjustment = adjustment
     @property
+    def score(self):
+        return self.__score
+    @property
     def rubric_items(self):
         """
         Get a list of rubric items.
