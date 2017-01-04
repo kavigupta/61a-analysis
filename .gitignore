@@ -2,3 +2,4 @@ real-data
 .ipynb_checkpoints
 temp*.ipynb
 **/__pycache__
+log
