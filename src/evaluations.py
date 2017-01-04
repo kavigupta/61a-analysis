@@ -18,11 +18,6 @@ class Evaluation:
     def __init__(self, name, email, *evals):
         self.name = name
         self.email = email
-        self.scores = [x.score for x in evals]
-        self.rubrics_per_question = [x.rubric_items for x in evals]
-        self.adjustments = [x.adjustment for x in evals]
-        self.comments = [x.comments for x in evals]
-        self.graders = [x.grader for x in evals]
         self.evals = evals
     def __repr__(self):
         evaluations = ", ".join(repr(x) for x in self.evals)
