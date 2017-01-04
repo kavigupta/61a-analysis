@@ -13,7 +13,8 @@ def permutation_test(partition, summary, number):
         real or merely the result of random chance. Takes NUMBER samples.
     """
     value = summary(partition.group_a, partition.group_b)
-    distribution = [summary(a, b) for a, b in _permute(partition.group_a, partition.group_b, number)]
+    distribution = [summary(a, b)
+                    for a, b in _permute(partition.group_a, partition.group_b, number)]
     n_greater = len([x for x in distribution if x > value])
     n_smaller = len([x for x in distribution if x > value])
     p_value = (1 + min(n_greater, n_smaller)) * 2 / (1 + number)
@@ -41,8 +42,14 @@ class PermutationReport:
             title = ""
         plt.title("%sPermutation test: P-value=%.4f" % (title, self.__p))
         plt.show()
+    @property
+    def p_value(self):
+        """
+        Get the p-value for the difference in distributions.
+        """
+        return self.__p
 
-class Partition:
+class Partition: # plyint: disable=R0903
     """
     A partition of a set of data into two groups.
     """
