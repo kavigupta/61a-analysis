@@ -137,9 +137,12 @@ class TestSeatingChart(TestCase):
         Test of adjacency, from sample seating chart.
         """
         seats = SeatingChart('data/test-seats-complex.csv')
-        self.assertEqual({"R@berkeley.edu", "T@berkeley.edu"}, set(seats.adjacent_to("Q@berkeley.edu")))
-        self.assertEqual({"O@berkeley.edu", "T@berkeley.edu", "U@berkeley.edu"}, set(seats.adjacent_to("Y@berkeley.edu")))
-        self.assertEqual(set(), set(seats.adjacent_to("A@berkeley.edu")), "Nothing adjacent to something in a different room")
+        self.assertEqual({"R@berkeley.edu", "T@berkeley.edu"},
+                         set(seats.adjacent_to("Q@berkeley.edu")))
+        self.assertEqual({"O@berkeley.edu", "T@berkeley.edu", "U@berkeley.edu"},
+                         set(seats.adjacent_to("Y@berkeley.edu")))
+        self.assertEqual(set(), set(seats.adjacent_to("A@berkeley.edu")),
+                         "Nothing adjacent to something in a different room")
 
 class TestLocation(TestCase):
     """
