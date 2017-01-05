@@ -67,6 +67,36 @@ class TestAnalytics(TestCase):
         expected = 0.1800983877
         aae(expected, actual)
 
+class TestGradedExams(TestCase):
+    """
+    Tests the graded exams class
+    """
+    def test_by_rooms(self):
+        """
+        Tests the function by_rooms, which splits the exam into several for each room.
+        """
+        by_rooms = list(EVALS_SAMPLE.by_room(SEATS_SAMPLE))
+        all_emails = sorted(x for _, y in by_rooms for x in y.emails)
+        self.assertEqual(all_emails, sorted(EVALS_SAMPLE.emails))
+        for room, exam in by_rooms:
+            for email in exam.emails:
+                self.assertEqual(room, SEATS_SAMPLE.room_for(email))
+                self.assertEqual(exam.evaluation_for(email), EVALS_SAMPLE.evaluation_for(email))
+    def test_remove(self):
+        """
+        Tests the function remove, which removes some email addresses.
+        """
+        some_emails = list(EVALS_SAMPLE.emails)[::3]
+        removed = EVALS_SAMPLE.remove(some_emails)
+        self.assertEqual(sorted(list(removed.emails) + some_emails), sorted(EVALS_SAMPLE.emails))
+    def test_time_diff(self):
+        """
+        Tests the time_diff function thoroughly on a evals_sample.
+        """
+        emails = [x + "@berkeley.edu" for x in "QWERTYUIOP"]
+        for index_a, email_a in enumerate(emails):
+            for index_b, email_b in enumerate(emails):
+                self.assertEqual(index_a - index_b, EVALS_SAMPLE.time_diff(email_a, email_b))
 class TestSeatingChart(TestCase):
     """
     Tests seating charts
