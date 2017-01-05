@@ -21,6 +21,11 @@ class ExamQuestion:
         Filters on the given grader.
         """
         return self.__filter(lambda x: x.grader == grader)
+    def score_for(self, email):
+        """
+        Return the score for the given EMAIL
+        """
+        return self.__exam_grades._question_score_for(self.__problem, email) # pylint: disable=W0212
     @property
     def evaluations(self):
         """
@@ -96,6 +101,13 @@ class ExamGrades:
         p_index = self.__problem_names.index(problem)
         for full_grade in self.__evaluation_per_email.values():
             yield full_grade.evals[p_index]
+    def _question_score_for(self, problem, email):
+        """
+        Get the question scores for the given problem.
+        """
+        p_index = self.__problem_names.index(problem)
+        return self.evaluation_for(email).evals[p_index]
+
     @property
     def emails(self):
         """
