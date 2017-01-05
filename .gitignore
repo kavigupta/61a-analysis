@@ -3,3 +3,4 @@ real-data
 temp*.ipynb
 **/__pycache__
 log
+**/.~lock*
