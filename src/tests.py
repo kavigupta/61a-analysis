@@ -3,14 +3,19 @@ Tests for various modules.
 """
 from unittest import TestCase, main
 
+from math import sqrt
+
 from seating_chart import SeatingChart, Location
 from constants import DATA_DIR
 from evaluations import proc_evaluations
-from analytics import compensate_for_grader_means
+from analytics import compensate_for_grader_means, all_correlations, Correlation
 
 from numpy.testing import assert_almost_equal as aae
 
 EVALS_SAMPLE = proc_evaluations('data/test-evals.zip')
+EVALS_SIMPLE_SAMPLE = proc_evaluations('data/test-simple-evals.zip')
+SEATS_SAMPLE = SeatingChart('data/test-seats.csv')
+SEATS_SIMPLE_SAMPLE = SeatingChart('data/test-seats-simple.csv')
 
 class TestAnalytics(TestCase):
     """
@@ -31,6 +36,18 @@ class TestAnalytics(TestCase):
         aae(+2-3.5/3, p_eval[0].complete_score.score)
         aae(+0.300, p_eval[1].complete_score.score)
         aae(-0.500, p_eval[2].complete_score.score)
+    def test_all_correlations(self):
+        corrs = list(all_correlations(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1))
+        self.assertEqual(6, len(corrs))
+        expect_cors = {
+            "QW" : Correlation(0, True, True, True),
+            "QE" : Correlation(1/sqrt(2), False, False, False),
+            "QR" : Correlation(1/sqrt(2), False, False, False),
+            "WE" : Correlation(0, True, False, False),
+            "WR" : Correlation(0, False, False, False),
+            "ER" : Correlation(1, True, False, True)
+        }.values()
+        self.assertEqual(set(expect_cors), set(corrs))
 
 class TestSeatingChart(TestCase):
     """

@@ -1,0 +1,11 @@
+Name,Student ID,Role,Email Address,First_Middle,First,Room,Index,Seat
+Q,234,Student,Q@berkeley.edu,Q,Q,Room 2,5,B1
+W,52345,Student,W@berkeley.edu,W,W,Room 2,4,A2
+E,234143,Student,E@berkeley.edu,E,E,Room 2,6,B2
+R,3452,Student,R@berkeley.edu,R,R,Room 3,9,A3
+T,34,Student,T@berkeley.edu,T,T,Room 3,0,B1
+Y,1,Student,Y@berkeley.edu,Y,Y,Room 1,1,A1
+U,234,Student,U@berkeley.edu,U,U,Room 2,7,C1
+I,4234,Student,I@berkeley.edu,I,I,Room 1,2,A2
+O,132,Student,O@berkeley.edu,O,O,Room 2,3,A1
+P,123,Student,P@berkeley.edu,P,P,Room 2,8,C10

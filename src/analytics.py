@@ -23,6 +23,17 @@ class Correlation: # pylint: disable=R0903
         self.correlation = correlation
         self.are_space_adjacent = are_space_adjacent
         self.are_same_room = are_same_room
+    def __repr__(self):
+        return "Correlation(%.8f, %r, %r, %r)" % tuple(self)
+    def __hash__(self):
+        return hash(repr(self))
+    def __eq__(self, other):
+        return repr(self) == repr(other)
+    def __iter__(self):
+        return iter((self.correlation,
+                     self.are_time_adjacent,
+                     self.are_space_adjacent,
+                     self.are_same_room))
 
 def all_correlations(graded_exam, seating_chart, time_delta):
     """
