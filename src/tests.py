@@ -67,6 +67,18 @@ class TestAnalytics(TestCase):
         expected = 0.1800983877
         aae(expected, actual)
 
+class TestExamQuestion(TestCase):
+    """
+    Tests the exam question class
+    """
+    def test_for_grader(self):
+        question = ExamQuestion(EVALS_SAMPLE, 1)
+        self.assertEqual({"Grader %s" % g for g in "ABC"}, question.graders)
+        for grader in question.graders:
+            self.assertEqual({grader}, question.for_grader(grader).graders)
+        all_emails = sorted(x for g in question.graders for x in question.for_grader(g).emails)
+        self.assertEqual(sorted(question.emails), all_emails)
+
 class TestGradedExams(TestCase):
     """
     Tests the graded exams class
