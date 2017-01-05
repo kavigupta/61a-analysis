@@ -10,7 +10,8 @@ from numpy.testing import assert_almost_equal as aae
 from seating_chart import SeatingChart, Location
 from constants import DATA_DIR
 from evaluations import proc_evaluations
-from analytics import compensate_for_grader_means, all_correlations, Correlation
+from analytics import compensate_for_grader_means, all_correlations, Correlation, _unusualness
+from graded_exam import ExamQuestion
 
 
 EVALS_SAMPLE = proc_evaluations('data/test-evals.zip')
@@ -53,6 +54,18 @@ class TestAnalytics(TestCase):
             "ER" : Correlation(1, True, False, True)
         }.values()
         self.assertEqual(set(expect_cors), set(corrs))
+    @staticmethod
+    def test_unusualness():
+        """
+        Checks unusualness on small sample.
+
+        For calculations, see calculation-of-unusualness.odt, which uses the bernouili random
+            variable variance p(1-p).
+        """
+        question = ExamQuestion(EVALS_SAMPLE, 1)
+        actual = _unusualness("Grader A", question)
+        expected = 0.1800983877
+        aae(expected, actual)
 
 class TestSeatingChart(TestCase):
     """
