@@ -72,6 +72,9 @@ class TestExamQuestion(TestCase):
     Tests the exam question class
     """
     def test_for_grader(self):
+        """
+        Tests to make sure for_grader works to specification.
+        """
         question = ExamQuestion(EVALS_SAMPLE, 1)
         self.assertEqual({"Grader %s" % g for g in "ABC"}, question.graders)
         for grader in question.graders:
@@ -109,6 +112,7 @@ class TestGradedExams(TestCase):
         for index_a, email_a in enumerate(emails):
             for index_b, email_b in enumerate(emails):
                 self.assertEqual(index_a - index_b, EVALS_SAMPLE.time_diff(email_a, email_b))
+
 class TestSeatingChart(TestCase):
     """
     Tests seating charts
