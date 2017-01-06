@@ -59,6 +59,11 @@ class SeatingChart:
         Gets the room in which the person with that email lies.
         """
         return self.__seating_chart[email].room
+    def y_region(self, email):
+        """
+        Get the y region (top, middle, bottom) of the given email.
+        """
+        return self._location(email).y_region
     def _location(self, email):
         return self.__seating_chart[email]
 
@@ -175,6 +180,7 @@ class Row:
     @property
     def __y_loc(self):
         return (self.__val - self.__rmin) / (self.__rmax - self.__rmin)
+    @property
     def y_region(self):
         """
         Returns whether we're in the front, middle, or back of the room.
@@ -217,7 +223,13 @@ class AbstractLocation(metaclass=ABCMeta):
         The current column
         """
         pass
-
+    @property
+    @abstractmethod
+    def y_region(self):
+        """
+        The region (top, middle, bottom) this is in.
+        """
+        pass
 @total_ordering
 class Location(AbstractLocation):
     """
@@ -264,12 +276,19 @@ class Location(AbstractLocation):
     @property
     def column(self):
         return self.__column
+    @property
+    def y_region(self):
+        return self.row.y_region
 
 @total_ordering
 class UnknownLocation(AbstractLocation):
     """
     A location which is UNKNOWN
     """
+    def __eq__(self, other):
+        return not ((self < other) or (other < self))
+    def __hash__(self):
+        return 0
     def __lt__(self, other):
         if isinstance(other, UnknownLocation):
             return False
@@ -284,6 +303,9 @@ class UnknownLocation(AbstractLocation):
         return UNKNOWN
     @property
     def room(self):
+        return UNKNOWN
+    @property
+    def y_region(self):
         return UNKNOWN
     def __bool__(self):
         return False

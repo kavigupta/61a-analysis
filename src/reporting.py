@@ -20,6 +20,7 @@ def grader_comparison_report():
     create_grader_report(evals, "Midterm 1", q_filter=lambda x: x == 1.3,
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
     by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
+    by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
 
 def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, highlight=None):
     """
@@ -80,29 +81,48 @@ def show_or_save(path, lgd):
     else:
         plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
 
-
-def by_room_chart(evals, seats, exam_name, path=None):
+def draw_exam_profiles(categories, exam_name, cat_type, path):
     """
     Gets a chart of every room's exam profile.
     """
     with TempParams(18):
         plt.figure(figsize=(15, 5))
-        for room, for_room in evals.by_room(seats):
-            if room is UNKNOWN:
+        for name, for_cat in categories:
+            if not isinstance(name, str):
                 continue
-            average = []
-            for email in for_room.emails:
-                average.append([x * 100 for x in for_room.exam_profile(email)])
-            mean = np.mean(average, axis=0)
-            std = np.std(average, axis=0) / sqrt(len(mean)) * 1.96
-            plt.errorbar(np.arange(len(mean)), mean, yerr=std, label=room, fmt='-')
+            mean = 100 * np.mean(for_cat, axis=0)
+            std = 100 * np.std(for_cat, axis=0) / sqrt(len(mean)) * 1.96
+            plt.errorbar(np.arange(len(mean)), mean, yerr=std, label=name, fmt='-')
         lgd = plt.legend(bbox_to_anchor=(1.25, 1))
         plt.ylim(-5, 105)
         plt.xlim(-1, len(mean))
         plt.xlabel("Rubric Item (ordered by position on the exam)")
         plt.ylabel("% Students With Rubric Item (95% CI)")
-        plt.title("%s Exam Profiles Per Room" % exam_name)
+        plt.title("%s Exam Profiles By %s" % (exam_name, cat_type))
         show_or_save(path, lgd)
+
+def by_region_chart(evals, seats, exam_name, path=None):
+    by_room_position = {x : [] for x in ("front", "middle", "back")}
+    for email in evals.emails:
+        if email not in seats.emails:
+            continue
+        region = seats.y_region(email)
+        if region == UNKNOWN:
+            continue
+        by_room_position[region].append(evals.exam_profile(email))
+    draw_exam_profiles(by_room_position.items(), exam_name, "Region", path)
+
+def by_room_chart(evals, seats, exam_name, path=None):
+    """
+    Gets a chart of every room's exam profile.
+    """
+    categories = []
+    for room, for_room in evals.by_room(seats):
+        average = []
+        for email in for_room.emails:
+            average.append([x for x in for_room.exam_profile(email)])
+        categories.append((room, average))
+    draw_exam_profiles(categories, exam_name, "Room", path)
 
 if __name__ == '__main__':
     grader_comparison_report()
