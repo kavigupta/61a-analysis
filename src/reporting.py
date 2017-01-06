@@ -8,7 +8,7 @@ import numpy as np
 
 from constants import DATA_DIR
 from evaluations import proc_evaluations
-from seating_chart import unknown, SeatingChart
+from seating_chart import UNKNOWN, SeatingChart
 from tools import TempParams
 
 def grader_comparison_report():
@@ -88,7 +88,7 @@ def by_room_chart(evals, seats, exam_name, path=None):
     with TempParams(18):
         plt.figure(figsize=(15, 5))
         for room, for_room in evals.by_room(seats):
-            if room is unknown:
+            if room is UNKNOWN:
                 continue
             average = []
             for email in for_room.emails:

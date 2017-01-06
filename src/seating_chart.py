@@ -235,10 +235,10 @@ class Location(AbstractLocation):
             return Location(room, int(match.group(1)), (ord(match.group(2)) - ord('A'), roman))
         match = re.search(r"N/A|FALSE", seat)
         if match:
-            return unknown
+            return UNKNOWN
         match = re.search(r"(Front|Desk).*", seat)
         if match:
-            return unknown # TODO handle these better
+            return UNKNOWN # TODO handle these better
         print(seat)
         raise RuntimeError(seat)
     def __repr__(self):
@@ -262,26 +262,26 @@ class Location(AbstractLocation):
 @total_ordering
 class UnknownLocation(AbstractLocation):
     """
-    A location which is unknown
+    A location which is UNKNOWN
     """
     def __lt__(self, other):
         if isinstance(other, UnknownLocation):
             return False
         return True
     def __repr__(self):
-        return "unknown"
+        return "UNKNOWN"
     @property
     def row(self):
-        return unknown
+        return UNKNOWN
     @property
     def column(self):
-        return unknown
+        return UNKNOWN
     @property
     def room(self):
-        return unknown
+        return UNKNOWN
     def __bool__(self):
         return False
-unknown = UnknownLocation()
+UNKNOWN = UnknownLocation()
 
 def __read_seating_chart(seat_file):
     """
@@ -339,11 +339,11 @@ def _get_direction_dictionary(chart):
     """
     ident = lambda c: c[1].row_identifier
     by_row = {x : tuple(y) for x, y in groupby(sorted(chart.items(), key=ident), key=ident)}
-    direct = defaultdict(lambda: defaultdict(lambda: unknown))
+    direct = defaultdict(lambda: defaultdict(lambda: UNKNOWN))
     for email in chart:
         location = chart[email]
         row_id = location.row_identifier
-        if row_id == (unknown, unknown):
+        if row_id == (UNKNOWN, UNKNOWN):
             continue
         alternatives = by_row[row_id]
         col_to_search = location.column
