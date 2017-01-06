@@ -11,7 +11,7 @@ from evaluations import proc_evaluations
 def grader_comparison_report():
     evals = proc_evaluations('/home/kavi/data/real-data/Midterm_1_evaluations.zip')
     create_grader_report(evals, q_filter=lambda x: x == 1.3,
-                         path="report/img/grader-comparison.png", highlight=(5, 8))
+                         path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
 
 def create_grader_report(evals, q_filter=lambda _: True, path=None, highlight=None):
     """
@@ -21,7 +21,7 @@ def create_grader_report(evals, q_filter=lambda _: True, path=None, highlight=No
         if highlight is not None and index not in highlight:
             return "black"
         else:
-            return None
+            return highlight[index]
     for question_name, ques in evals:
         if not q_filter(question_name):
             continue
