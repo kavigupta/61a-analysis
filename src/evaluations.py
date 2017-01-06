@@ -49,6 +49,9 @@ class QuestionScore:
         self.__adjustment = adjustment
     @property
     def score(self):
+        """
+        Gets the overall question score.
+        """
         return self.__score
     @property
     def rubric_items(self):
