@@ -6,14 +6,22 @@ from math import sqrt
 from matplotlib import pyplot as plt
 import numpy as np
 
+from constants import DATA_DIR
 from evaluations import proc_evaluations
+from seating_chart import unknown, SeatingChart
+from tools import TempParams
 
 def grader_comparison_report():
-    evals = proc_evaluations('/home/kavi/data/real-data/Midterm_1_evaluations.zip')
-    create_grader_report(evals, q_filter=lambda x: x == 1.3,
+    """
+    Generates all the images necessary for the grader comparison report.
+    """
+    evals = proc_evaluations('%s/real-data/Midterm_1_evaluations.zip' % DATA_DIR)
+    seats = SeatingChart('%s/real-data/mt1_seats.csv' % DATA_DIR)
+    create_grader_report(evals, "Midterm 1", q_filter=lambda x: x == 1.3,
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
+    by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
 
-def create_grader_report(evals, q_filter=lambda _: True, path=None, highlight=None):
+def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, highlight=None):
     """
     Creates a report on grader anomalies for a given set of evaluations
     """
@@ -58,13 +66,43 @@ def create_grader_report(evals, q_filter=lambda _: True, path=None, highlight=No
         plt.xlim(xvals[0] + 0.5, xvals[-1] + 1.5)
         lgd = plt.legend(bbox_to_anchor=(1.4, 1))
         plt.gca().set_xticks(np.array(xvals) + 1)
-        plt.title("Per Rubric Item for Midterm 1, Problem %s" % question_name)
+        plt.title("Per Rubric Item for %s, Problem %s" % (exam_name, question_name))
         plt.ylabel("Percentage Selected")
         plt.xlabel("Rubric Item Number")
-        if path is None:
-            plt.show()
-        else:
-            plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
+        show_or_save(path, lgd)
+
+def show_or_save(path, lgd):
+    """
+    Either shows or saves
+    """
+    if path is None:
+        plt.show()
+    else:
+        plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
+
+
+def by_room_chart(evals, seats, exam_name, path=None):
+    """
+    Gets a chart of every room's exam profile.
+    """
+    with TempParams(18):
+        plt.figure(figsize=(15, 5))
+        for room, for_room in evals.by_room(seats):
+            if room is unknown:
+                continue
+            average = []
+            for email in for_room.emails:
+                average.append([x * 100 for x in for_room.exam_profile(email)])
+            mean = np.mean(average, axis=0)
+            std = np.std(average, axis=0) / sqrt(len(mean)) * 1.96
+            plt.errorbar(np.arange(len(mean)), mean, yerr=std, label=room, fmt='-')
+        lgd = plt.legend(bbox_to_anchor=(1.25, 1))
+        plt.ylim(-5, 105)
+        plt.xlim(-1, len(mean))
+        plt.xlabel("Rubric Item (ordered by position on the exam)")
+        plt.ylabel("% Students With Rubric Item (95% CI)")
+        plt.title("%s Exam Profiles Per Room" % exam_name)
+        show_or_save(path, lgd)
 
 if __name__ == '__main__':
     grader_comparison_report()

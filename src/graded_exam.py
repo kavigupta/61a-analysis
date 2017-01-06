@@ -82,6 +82,13 @@ class ExamGrades:
         for room, items in by_room.items():
             yield room, ExamGrades(self.__problem_names,
                                    {e : l for e, l, _ in items}, {e : ev for e, _, ev in items})
+    def exam_profile(self, email):
+        """
+        Returns the exam profile, a list of every rubric item possible.
+        """
+        return [x
+                for ev in self.evaluation_for(email).evals
+                for x in ev.complete_score.rubric_items]
     @staticmethod
     def create(problem_names, grades_per_index):
         """
