@@ -4,3 +4,7 @@ temp*.ipynb
 **/__pycache__
 log
 **/.~lock*
+report/img
+report/*.aux
+report/*.out
+report/*.log
