@@ -59,6 +59,8 @@ class SeatingChart:
         Gets the room in which the person with that email lies.
         """
         return self.__seating_chart[email].room
+    def _location(self, email):
+        return self.__seating_chart[email]
 
 class Column:
     """

@@ -143,6 +143,19 @@ class TestSeatingChart(TestCase):
                          set(seats.adjacent_to("Y@berkeley.edu")))
         self.assertEqual(set(), set(seats.adjacent_to("A@berkeley.edu")),
                          "Nothing adjacent to something in a different room")
+    def test_column_normalization_per_room(self):
+        """
+        Makes sure that column normalization is carried out on a per-room basis.
+        """
+        seats = SeatingChart('data/test-seats-multiroom.csv')
+        self.assertEqual({"Q@berkeley.edu", "T@berkeley.edu"},
+                         set(seats.adjacent_to("R@berkeley.edu")))
+        self.assertEqual({"Y@berkeley.edu", "I@berkeley.edu", "W@berkeley.edu"},
+                         set(seats.adjacent_to("U@berkeley.edu")))
+        self.assertEqual({"P@berkeley.edu", "W@berkeley.edu"},
+                         set(seats.adjacent_to("E@berkeley.edu")))
+        # pylint: disable=W0212
+        self.assertEqual(0.5, seats._location("W@berkeley.edu").column.location)
 
 class TestLocation(TestCase):
     """
