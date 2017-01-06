@@ -10,3 +10,9 @@ report_pdf: report_images
 
 report_images:
 	python3 src/reporting.py
+
+pylint:
+	pylint src/*.py | grep -v I:  > log
+
+tests:
+	python src/tests.py
