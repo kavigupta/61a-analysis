@@ -152,6 +152,9 @@ class ColumnRelation(Enum):
 
 @total_ordering
 class Row:
+    """
+    Represents a bounded row.
+    """
     def __init__(self, val, rmin, rmax):
         self.__val = val
         self.__rmin = rmin
@@ -173,6 +176,9 @@ class Row:
     def __y_loc(self):
         return (self.__val - self.__rmin) / (self.__rmax - self.__rmin)
     def y_region(self):
+        """
+        Returns whether we're in the front, middle, or back of the room.
+        """
         if self.__y_loc < 1 / 3:
             return "front"
         elif self.__y_loc < 2 / 3:
