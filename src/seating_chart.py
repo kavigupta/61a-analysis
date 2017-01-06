@@ -150,6 +150,36 @@ class ColumnRelation(Enum):
         else:
             raise TypeError("{} cannot be coerced into a direction".format(self))
 
+@total_ordering
+class Row:
+    def __init__(self, val, rmin, rmax):
+        self.__val = val
+        self.__rmin = rmin
+        self.__rmax = rmax
+    def __lt__(self, other):
+        # pylint: disable=W0212
+        return self.__val < other.__val
+    def __eq__(self, other):
+        # pylint: disable=W0212
+        return self.__val == other.__val
+    def __hash__(self):
+        return hash(self.__val)
+    def move(self, y_off):
+        """
+        Move the given row in that direction, returning the new value.
+        """
+        return Row(self.__val + y_off, self.__rmin, self.__rmax)
+    @property
+    def __y_loc(self):
+        return (self.__val - self.__rmin) / (self.__rmax - self.__rmin)
+    def y_region(self):
+        if self.__y_loc < 1 / 3:
+            return "front"
+        elif self.__y_loc < 2 / 3:
+            return "middle"
+        else:
+            return "back"
+
 class AbstractLocation(metaclass=ABCMeta):
     """
     Describes the abstract concept of a location, which might be known or unknown
@@ -270,10 +300,17 @@ def __normalize_columns_in_chart(seating_chart):
         everything into Column objects.
     """
     unknowns = [x for x in seating_chart if isinstance(x[1], UnknownLocation)]
+    yield from unknowns
     knowns = [x for x in seating_chart if not isinstance(x[1], UnknownLocation)]
     knowns.sort(key=lambda x: x[1])
-    yield from unknowns
-    for _, grouped_items in groupby(knowns, key=lambda x: x[1].row_identifier):
+    def _normal_rows(sorted_by_room):
+        for _, grouped_items in groupby(sorted_by_room, key=lambda x: x[1].room):
+            grouped_items = list(grouped_items)
+            minimum = min([x[1].row for x in grouped_items])
+            maximum = max([x[1].row for x in grouped_items])
+            for email, loc in grouped_items:
+                yield email, Location(loc.room, Row(loc.row, minimum, maximum), loc.column)
+    for _, grouped_items in groupby(_normal_rows(knowns), key=lambda x: x[1].row_identifier):
         grouped_items = list(grouped_items)
         raw_col = [x[1].column for x in grouped_items]
         if isinstance(raw_col[0], tuple):
@@ -315,7 +352,7 @@ def _get_direction_dictionary(chart):
             if relation.sideways:
                 direct[email][relation.direction_for] = in_row[0]
         for y_direction in (1, -1):
-            modified_row_id = (row_id[0], row_id[1] + y_direction)
+            modified_row_id = (row_id[0], row_id[1].move(y_direction))
             if modified_row_id not in by_row:
                 continue
             altern_row = by_row[modified_row_id]
