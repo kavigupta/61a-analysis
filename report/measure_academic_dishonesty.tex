@@ -24,7 +24,8 @@
             also see that they have a very different profile of rubric items. In this case, what happened
             was that these two graders were giving rubric items 2, 3, and 4, which corresponded to each of
             the three parts of the problem being correct, rather than giving rubric item 1, which
-            corresponded to the entire problem being correct.
+            corresponded to the entire problem being correct. While this is irrelevant to the student, it
+            does confound analyses.
 
         \begin{figure}[h!]
             \centering
@@ -42,5 +43,11 @@
                 $$u = \sum_k \left|\frac{x_k - \mu_k}{\sigma_k}\right|$$ where $x_k$ is the mean for the 
                 given grader of the $k$th rubric item, and $\mu_k, \sigma_k$ are the mean and standard
                 deviation for that rubric item in general}.
-
+    \subsection{Sequencing}
+        The Gambler's Fallacy could possibly lead to a negative correlation between consecutively graded
+            exams. To control for this, we simply ignore pairs of exams that are graded near each other in
+            time.
+    \subsection{Room}
+        Individual rooms might have different rubric profiles, due to, for example, different TAs in
+            different rooms.
 \end{document}
