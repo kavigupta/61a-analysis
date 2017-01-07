@@ -25,16 +25,19 @@ def grader_comparison_report():
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
     by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
     by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
-    permutation_test_of_correlations(zero_meaned, seats, path="report")
+    permutation_test_of_correlations(zero_meaned, seats, path="report/img/permutation-test-correlation.png")
 
 def permutation_test_of_correlations(zero_meaned, seats, path=None):
     all_correls = list(all_correlations(zero_meaned, seats, 2))
     non_time_adjacents = [correl for correl in all_correls if correl.are_same_room and not correl.are_time_adjacent]
+    plt.figure()
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
         summary=lambda x, y: np.mean([u.correlation for u in x]) - np.mean([u.correlation for u in y]),
         number=100)
-    report.report("N=%s" % (len(zero_meaned.emails)), path=path)
+    report.report(
+        summary_name="Difference in Mean Correlations Between Adjacent and Non-Adjacent Group",
+        title="N=%s" % (len(zero_meaned.emails)), path=path)
 
 def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, highlight=None):
     """

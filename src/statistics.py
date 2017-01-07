@@ -29,20 +29,22 @@ class PermutationReport:
         self.__val = value
         self.__distr = distribution
         self.__p = p_value
-    def report(self, title=None, path=None):
+    def report(self, summary_name, title=None, path=None):
         """
         Perform the report.
         """
         if all(np.isnan(self.__distr)): # pylint: disable=E1101
             return
-        plt.hist(self.__distr)
-        plt.axvline(self.__val)
+        plt.hist(self.__distr, label="Permutation Distribution", color="green")
+        plt.axvline(self.__val, label="Actual Sample", color="red")
         if title is not None:
             title = title + ": "
         else:
             title = ""
         plt.title("%sPermutation test: P-value=%.4f" % (title, self.__p))
-        lgd = plt.legend()
+        plt.xlabel(summary_name)
+        plt.ylabel("Frequency")
+        lgd = plt.legend(bbox_to_anchor=(1.4,1))
         show_or_save(path, lgd)
     @property
     def p_value(self):
