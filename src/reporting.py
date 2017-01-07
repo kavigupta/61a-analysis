@@ -6,9 +6,11 @@ from math import sqrt
 from matplotlib import pyplot as plt
 import numpy as np
 
+from analytics import compensate_for_grader_means, all_correlations
 from constants import DATA_DIR
 from evaluations import proc_evaluations
 from seating_chart import UNKNOWN, SeatingChart
+from statistics import permutation_test, Partition
 from tools import TempParams
 from tools import show_or_save
 
@@ -18,10 +20,21 @@ def grader_comparison_report():
     """
     evals = proc_evaluations('%s/real-data/Midterm_1_evaluations.zip' % DATA_DIR)
     seats = SeatingChart('%s/real-data/mt1_seats.csv' % DATA_DIR)
+    zero_meaned = compensate_for_grader_means(evals)
     create_grader_report(evals, "Midterm 1", q_filter=lambda x: x == 1.3,
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
     by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
     by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
+    permutation_test_of_correlations(zero_meaned, seats, path="report")
+
+def permutation_test_of_correlations(zero_meaned, seats, path=None):
+    all_correls = list(all_correlations(zero_meaned, seats, 2))
+    non_time_adjacents = [correl for correl in all_correls if correl.are_same_room and not correl.are_time_adjacent]
+    report = permutation_test(
+        partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
+        summary=lambda x, y: np.mean([u.correlation for u in x]) - np.mean([u.correlation for u in y]),
+        number=100)
+    report.report("N=%s" % (len(zero_meaned.emails)), path=path)
 
 def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, highlight=None):
     """
