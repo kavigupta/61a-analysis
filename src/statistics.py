@@ -6,6 +6,7 @@ from random import shuffle
 
 from matplotlib import pyplot as plt
 import numpy as np
+from tools import show_or_save
 
 def permutation_test(partition, summary, number):
     """
@@ -28,7 +29,7 @@ class PermutationReport:
         self.__val = value
         self.__distr = distribution
         self.__p = p_value
-    def report(self, title=None):
+    def report(self, title=None, path=None):
         """
         Perform the report.
         """
@@ -41,7 +42,8 @@ class PermutationReport:
         else:
             title = ""
         plt.title("%sPermutation test: P-value=%.4f" % (title, self.__p))
-        plt.show()
+        lgd = plt.legend()
+        show_or_save(path, lgd)
     @property
     def p_value(self):
         """
