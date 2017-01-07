@@ -44,7 +44,7 @@ class PermutationReport:
         plt.title("%sPermutation test: P-value=%.4f" % (title, self.__p))
         plt.xlabel(summary_name)
         plt.ylabel("Frequency")
-        lgd = plt.legend(bbox_to_anchor=(1.4,1))
+        lgd = plt.legend(bbox_to_anchor=(1.4, 1))
         show_or_save(path, lgd)
     @property
     def p_value(self):
