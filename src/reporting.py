@@ -10,6 +10,7 @@ from constants import DATA_DIR
 from evaluations import proc_evaluations
 from seating_chart import UNKNOWN, SeatingChart
 from tools import TempParams
+from tools import show_or_save
 
 def grader_comparison_report():
     """
@@ -71,15 +72,6 @@ def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, h
         plt.ylabel("Percentage Selected")
         plt.xlabel("Rubric Item Number")
         show_or_save(path, lgd)
-
-def show_or_save(path, lgd):
-    """
-    Either shows or saves
-    """
-    if path is None:
-        plt.show()
-    else:
-        plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
 
 def draw_exam_profiles(categories, exam_name, cat_type, path):
     """

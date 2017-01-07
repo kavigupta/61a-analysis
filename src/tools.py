@@ -3,6 +3,7 @@ Random tools that don't fit anywhere else
 """
 
 import matplotlib as mp
+import matplotlib.pyplot as plt
 
 def flatten(vals):
     """
@@ -23,3 +24,12 @@ class TempParams: # pylint: disable=R0903
     def __exit__(self, typ, value, traceback):
         del typ, value, traceback
         mp.rcParams.update({'font.size': self.font})
+
+def show_or_save(path, lgd):
+    """
+    Either shows or saves
+    """
+    if path is None:
+        plt.show()
+    else:
+        plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
