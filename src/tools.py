@@ -34,7 +34,7 @@ def show_or_save(path, lgd):
     else:
         plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
 
-class cached_property:
+class cached_property: # pylint: disable=C0103, R0903
     """
     Similar to `property`, but caches the result.
     """

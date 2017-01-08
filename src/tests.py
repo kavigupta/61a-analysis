@@ -48,14 +48,14 @@ class TestAnalytics(TestCase):
             ExamPair(EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % first),
                      EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % second),
                      time, space, room)
-                for first, second, time, space, room in [
-                    ("Q", "W", True, True, True),
-                    ("Q", "E", False, False, False),
-                    ("Q", "R", False, False, False),
-                    ("W", "E", True, False, False),
-                    ("W", "R", False, False, False),
-                    ("E", "R", True, False, True),
-                ]
+            for first, second, time, space, room in [
+                ("Q", "W", True, True, True),
+                ("Q", "E", False, False, False),
+                ("Q", "R", False, False, False),
+                ("W", "E", True, False, False),
+                ("W", "R", False, False, False),
+                ("E", "R", True, False, True),
+            ]
         }
         self.assertEqual(set(expect_cors), set(corrs))
     @staticmethod
@@ -147,7 +147,7 @@ class TestSeatingChart(TestCase):
                          set(seats.adjacent_to("Y@berkeley.edu")))
         self.assertEqual(set(), set(seats.adjacent_to("A@berkeley.edu")),
                          "Nothing adjacent to something in a different room")
-    def test_column_normalization_per_room(self):
+    def test_column_normalization(self):
         """
         Makes sure that column normalization is carried out on a per-room basis.
         """

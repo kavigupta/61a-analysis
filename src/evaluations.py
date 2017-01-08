@@ -32,6 +32,9 @@ class Evaluation:
                           *[x.zero_mean(y) for x, y in zip(self.evals, means)])
     @cached_property
     def score(self):
+        """
+        Get the total score on the exam; i.e., the score the student receives for the exam.
+        """
         return sum(e.total_score for e in self.evals)
     @cached_property
     def __norm_vec(self):
@@ -114,6 +117,9 @@ class ScoredQuestion:
         self.grader = grader
     @property
     def total_score(self):
+        """
+        Get the total score for this question.
+        """
         return self.complete_score.score
     def __repr__(self):
         tupled = (self.email, self.complete_score, self.comments, self.grader)

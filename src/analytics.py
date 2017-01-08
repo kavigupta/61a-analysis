@@ -21,6 +21,7 @@ class ExamPair: # pylint: disable=R0903
     Structure representing a correlation between exam scores, as well as metadata on location.
     """
     def __init__(self, first, second, are_time_adjacent, are_space_adjacent, are_same_room):
+        # pylint: disable=R0913
         self.are_time_adjacent = are_time_adjacent
         self.first = first
         self.second = second
@@ -41,8 +42,7 @@ class ExamPair: # pylint: disable=R0903
     def __repr__(self):
         return "ExamPair(%s, %s, %r, %r, %r)" % tuple(self)
     def __hash__(self):
-        return hash((hash(self.first) + hash(self.second), self.are_time_adjacent, self.are_space_adjacent,
-            self.are_same_room))
+        return hash((hash(self.first) + hash(self.second), tuple(self)[2:]))
     def __eq__(self, other):
         align = self.first == other.first and self.second == other.second
         mis_align = self.first == other.second and self.second == other.first
