@@ -34,7 +34,7 @@ def setup_ocr(raw_data):
     mainfolder = base + listdir(base)[0]
     for index, path in enumerate(sorted(listdir(mainfolder))):
         if index % 100 == 0:
-            print("*", end="")
+            print("*", end="", flush=True)
         fullpath = mainfolder + "/" + path
         system("mkdir {}/ocr".format(DATA_DIR))
         basic_format = r"pdftoppm -png -f 3 -l 3 -x 170 -y %s -W 900 -H 100 {} > {}/ocr/%s{}.png" \

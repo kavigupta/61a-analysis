@@ -73,6 +73,6 @@ class Partition: # pylint: disable=R0903
 def _permute(sample_a, sample_b, number):
     combined = list(sample_a) + list(sample_b)
     for _ in range(number):
-        print("*", end="")
+        print("*", end="", flush=True)
         shuffle(combined)
         yield combined[:len(sample_a)], combined[len(sample_a):]
