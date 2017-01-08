@@ -10,6 +10,7 @@ import numpy as np
 from graded_exam import ExamGrades
 
 from constants import DATA_DIR
+from tools import cached_property
 
 class Evaluation:
     """
@@ -29,6 +30,9 @@ class Evaluation:
         """
         return Evaluation(self.name, self.email,
                           *[x.zero_mean(y) for x, y in zip(self.evals, means)])
+    @property
+    def score(self):
+        return sum(e.total_score for e in self.evals)
     @property
     def __norm_vec(self):
         all_rubrics = np.array([y for x in self.evals for y in x.rubric_items])
@@ -108,6 +112,9 @@ class ScoredQuestion:
         self.complete_score = complete_score
         self.comments = comments
         self.grader = grader
+    @property
+    def total_score(self):
+        return self.complete_score.score
     def __repr__(self):
         tupled = (self.email, self.complete_score, self.comments, self.grader)
         return ("ScoredQuestion(" + ", ".join(["{!r}"] * 4) + ")").format(*tupled)
