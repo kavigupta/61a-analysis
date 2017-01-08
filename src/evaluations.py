@@ -30,10 +30,10 @@ class Evaluation:
         """
         return Evaluation(self.name, self.email,
                           *[x.zero_mean(y) for x, y in zip(self.evals, means)])
-    @property
+    @cached_property
     def score(self):
         return sum(e.total_score for e in self.evals)
-    @property
+    @cached_property
     def __norm_vec(self):
         all_rubrics = np.array([y for x in self.evals for y in x.rubric_items])
         return all_rubrics / np.linalg.norm(all_rubrics)
