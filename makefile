@@ -10,9 +10,14 @@ report_pdf: report_images
 
 report_images:
 	python3 src/reporting.py
+	touch report_images
 
 pylint:
 	pylint src/*.py | grep -v I:  > log
 
 tests:
 	python src/tests.py
+
+clean:
+	rm report_images
+	rm report/measure_academic_dishonesty.pdf

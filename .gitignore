@@ -8,3 +8,4 @@ report/img
 report/*.aux
 report/*.out
 report/*.log
+report_images
