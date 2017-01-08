@@ -32,6 +32,12 @@ class ExamPair: # pylint: disable=R0903
         The correlation between the two exam's rubric items
         """
         return self.first.correlation(self.second)
+    @cached_property
+    def abs_score_diff(self):
+        """
+        The absolute difference between the exam scores
+        """
+        return abs(self.first.score - self.second.score)
     def __repr__(self):
         return "Correlation(%.8f, %r, %r, %r)" % tuple(self)
     def __hash__(self):
