@@ -3,14 +3,13 @@ Tests for various modules.
 """
 from unittest import TestCase, main
 
-from math import sqrt
 
 from numpy.testing import assert_almost_equal as aae
 
 from seating_chart import SeatingChart, Location
 from constants import DATA_DIR
 from evaluations import proc_evaluations
-from analytics import compensate_for_grader_means, all_correlations, Correlation, _unusualness
+from analytics import compensate_for_grader_means, all_pairs, ExamPair, _unusualness
 from graded_exam import ExamQuestion
 
 
@@ -43,16 +42,21 @@ class TestAnalytics(TestCase):
         """
         Tests the all_correlations method by exact checking on a small test case.
         """
-        corrs = list(all_correlations(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1))
+        corrs = list(all_pairs(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1))
         self.assertEqual(6, len(corrs))
         expect_cors = {
-            "QW" : Correlation(0, True, True, True),
-            "QE" : Correlation(1/sqrt(2), False, False, False),
-            "QR" : Correlation(1/sqrt(2), False, False, False),
-            "WE" : Correlation(0, True, False, False),
-            "WR" : Correlation(0, False, False, False),
-            "ER" : Correlation(1, True, False, True)
-        }.values()
+            ExamPair(EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % first),
+                     EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % second),
+                     time, space, room)
+                for first, second, time, space, room in [
+                    ("Q", "W", True, True, True),
+                    ("Q", "E", False, False, False),
+                    ("Q", "R", False, False, False),
+                    ("W", "E", True, False, False),
+                    ("W", "R", False, False, False),
+                    ("E", "R", True, False, True),
+                ]
+        }
         self.assertEqual(set(expect_cors), set(corrs))
     @staticmethod
     def test_unusualness():
