@@ -69,4 +69,27 @@
     \subsection{Seating Chart Inaccuracies}
         Not yet fixed. Have the data, but would require a lot of data input because OCR is not particularly
             effective at recognizing handwriting.
+\section{Measuring Similarity}
+    \subsection{Correlation}
+        Using correlation between normalized scores as a measure of similarity, we can prove that
+            there is a difference between the similarities in the set of adjacent pairs of students
+            and the set of non-adjacent pairs of students (see controls above for more details).
+
+        Overall, a permutation test shows that the difference is in fact significant:
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{img/permutation-test-correlation.png}
+        \end{figure}
+    \subsection{Absolute Difference in Overall Exam Score}
+        An alternate means of similarity is far simpler. We look at the average difference
+            between the scores in the two exams. It turns out that despite its unsophistication,
+            this test is also able to see past the noise in the data.
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{img/permutation-test-abs-difference.png}
+        \end{figure}
+        
+        In this case, the difference is the opposite as above, because a higher correlation
+            corresponds to a smaller absolute difference.
+
 \end{document}
