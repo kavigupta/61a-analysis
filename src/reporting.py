@@ -25,13 +25,16 @@ def grader_comparison_report():
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
     by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
     by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
-    permutation_test_of_correlations(zero_meaned, seats,
-                                     path="report/img/permutation-test-correlation.png")
+    permutation_test_of_pairs(lambda x: x.correlation, "Correlation", zero_meaned, seats,
+                              path="report/img/permutation-test-correlation.png")
+    permutation_test_of_pairs(lambda x: x.abs_score_diff, "Absolute Score Difference",
+                              zero_meaned, seats,
+                              path="report/img/permutation-test-abs-difference.png")
 
-def permutation_test_of_correlations(zero_meaned, seats, path=None): #pylint: disable=C0103
+def permutation_test_of_pairs(statistic, name, zero_meaned, seats, path=None): #pylint: disable=C0103
     """
-    Runs a permutation test on the differences between mean correlations in the adjacent and
-        non-adjacent pairs of students
+    Runs a permutation test on the differences between means of the given statistic in the adjacent
+        and non-adjacent pairs of students
     """
     non_time_adjacents = list(pair
                               for pair in all_pairs(zero_meaned, seats, 2)
@@ -40,10 +43,10 @@ def permutation_test_of_correlations(zero_meaned, seats, path=None): #pylint: di
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
         summary=lambda x, y: np.mean(
-            [u.correlation for u in x]) - np.mean([u.correlation for u in y]),
+            [statistic(u) for u in x]) - np.mean([statistic(u) for u in y]),
         number=100)
     report.report(
-        summary_name="Difference in Mean Correlations Between Adjacent and Non-Adjacent Group",
+        summary_name="Difference in Mean %s Between Adjacent and Non-Adjacent Group" % name,
         title="N=%s" % (len(zero_meaned.emails)), path=path)
 
 def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, highlight=None):
