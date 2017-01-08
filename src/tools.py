@@ -34,16 +34,13 @@ def show_or_save(path, lgd):
     else:
         plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
 
-def cached_property(prop):
+class cached_property:
     """
     Similar to `property`, but caches the result.
     """
-    value = None
-    have_value = False
-    def cached(sel):
-        nonlocal value, have_value
-        if not have_value:
-            value = prop(sel)
-            have_value = True
+    def __init__(self, prop):
+        self.__prop = prop
+    def __get__(self, instance, _):
+        value = self.__prop(instance)
+        setattr(instance, self.__prop.__name__, value)
         return value
-    return property(cached)
