@@ -6,7 +6,7 @@ from math import sqrt
 from matplotlib import pyplot as plt
 import numpy as np
 
-from analytics import compensate_for_grader_means, all_correlations
+from analytics import compensate_for_grader_means, all_pairs
 from constants import DATA_DIR
 from evaluations import proc_evaluations
 from seating_chart import UNKNOWN, SeatingChart
@@ -33,10 +33,9 @@ def permutation_test_of_correlations(zero_meaned, seats, path=None): #pylint: di
     Runs a permutation test on the differences between mean correlations in the adjacent and
         non-adjacent pairs of students
     """
-    all_correls = list(all_correlations(zero_meaned, seats, 2))
-    non_time_adjacents = [correl
-                          for correl in all_correls
-                          if correl.are_same_room and not correl.are_time_adjacent]
+    non_time_adjacents = list(pair
+                       for pair in all_pairs(zero_meaned, seats, 2)
+                       if pair.are_same_room and not pair.are_time_adjacent)
     plt.figure()
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),

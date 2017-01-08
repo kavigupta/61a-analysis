@@ -4,6 +4,8 @@ A module containing a variety of functions for analyzing the data. This is suppo
 """
 import numpy as np
 
+from tools import cached_property
+
 def compensate_for_grader_means(evals, z_thresh=1):
     """
     Compensates for grader means by subtracting each grader's average grades per problem. Eliminates
@@ -14,15 +16,22 @@ def compensate_for_grader_means(evals, z_thresh=1):
     zeroed = filt.zero_meaned()
     return zeroed
 
-class Correlation: # pylint: disable=R0903
+class ExamPair: # pylint: disable=R0903
     """
     Structure representing a correlation between exam scores, as well as metadata on location.
     """
-    def __init__(self, correlation, are_time_adjacent, are_space_adjacent, are_same_room):
+    def __init__(self, first, second, are_time_adjacent, are_space_adjacent, are_same_room):
         self.are_time_adjacent = are_time_adjacent
-        self.correlation = correlation
+        self.first = first
+        self.second = second
         self.are_space_adjacent = are_space_adjacent
         self.are_same_room = are_same_room
+    @cached_property
+    def correlation(self):
+        """
+        The correlation between the two exam's rubric items
+        """
+        return self.first.correlation(self.second)
     def __repr__(self):
         return "Correlation(%.8f, %r, %r, %r)" % tuple(self)
     def __hash__(self):
@@ -35,9 +44,9 @@ class Correlation: # pylint: disable=R0903
                      self.are_space_adjacent,
                      self.are_same_room))
 
-def all_correlations(graded_exam, seating_chart, time_delta):
+def all_pairs(graded_exam, seating_chart, time_delta):
     """
-    Yields an iterable of all Correlations between individuals.
+    Yields an iterable of all pairs between individuals.
     """
     emails = list(graded_exam.emails)
     for index_x, email_x in enumerate(emails):
@@ -51,10 +60,9 @@ def all_correlations(graded_exam, seating_chart, time_delta):
                 continue
             eval_y = graded_exam.evaluation_for(email_y)
             time_adjacent = abs(graded_exam.time_diff(email_x, email_y)) <= time_delta
-            correl = eval_x.correlation(eval_y)
             space_adjacent = seating_chart.are_adjacent(email_x, email_y)
             same_room = seating_chart.same_room(email_x, email_y)
-            yield Correlation(correl, time_adjacent, space_adjacent, same_room)
+            yield ExamPair(eval_x, eval_y, time_adjacent, space_adjacent, same_room)
 
 def _unusualness(grader, question):
     """
