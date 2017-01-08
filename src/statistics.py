@@ -16,8 +16,8 @@ def permutation_test(partition, summary, number):
     value = summary(partition.group_a, partition.group_b)
     distribution = [summary(a, b)
                     for a, b in _permute(partition.group_a, partition.group_b, number)]
-    n_greater = len([x for x in distribution if x > value])
-    n_smaller = len([x for x in distribution if x > value])
+    n_greater = len([x for x in distribution if x >= value])
+    n_smaller = len([x for x in distribution if x <= value])
     p_value = (1 + min(n_greater, n_smaller)) * 2 / (1 + number)
     return PermutationReport(value, distribution, p_value)
 
