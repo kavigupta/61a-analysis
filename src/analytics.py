@@ -39,13 +39,19 @@ class ExamPair: # pylint: disable=R0903
         """
         return abs(self.first.score - self.second.score)
     def __repr__(self):
-        return "Correlation(%.8f, %r, %r, %r)" % tuple(self)
+        return "ExamPair(%s, %s, %r, %r, %r)" % tuple(self)
     def __hash__(self):
-        return hash(repr(self))
+        return hash((hash(self.first) + hash(self.second), self.are_time_adjacent, self.are_space_adjacent,
+            self.are_same_room))
     def __eq__(self, other):
-        return repr(self) == repr(other)
+        align = self.first == other.first and self.second == other.second
+        mis_align = self.first == other.second and self.second == other.first
+        if not align and not mis_align:
+            return False
+        return tuple(self)[2:] == tuple(other)[2:]
     def __iter__(self):
-        return iter((self.correlation,
+        return iter((self.first,
+                     self.second,
                      self.are_time_adjacent,
                      self.are_space_adjacent,
                      self.are_same_room))
