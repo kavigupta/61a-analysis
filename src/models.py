@@ -4,8 +4,9 @@ A module for handling models.
 
 from abc import abstractmethod, ABCMeta
 import numpy as np
+from numpy.random import random
 
-from statistics import p_value, Partition
+from statistics import p_value, Partition, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
 
 class Model(metaclass=ABCMeta):
@@ -75,3 +76,27 @@ def score_diff_summary(grades, seats):
     parts = Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent)
     return np.mean([x.abs_score_diff for x in parts.group_a]) \
                 - np.mean([x.abs_score_diff for x in parts.group_b])
+
+class PointEvaluation:
+    means_need_compensation = False
+    """
+    Represents a Mock Evaluation with each point being an independent item
+    """
+    def __init__(self, points):
+        self.score = sum(points)
+        self.points = points
+
+class ScoreIndependentModel(Model):
+    """
+    A simple model where every point is assumed to be independent of every other point.
+    """
+    def __init__(self, environment):
+        super().__init__(environment)
+        self.__n_questions = round(environment.max_score)
+        self.__p = environment.mean_score / self.__n_questions
+    def _get_grades(self, _):
+        for email in self._environment.emails:
+            yield email, PointEvaluation([random() < self.__p for _ in range(self.__n_questions)])
+    @staticmethod
+    def parameters(_):
+        return [()]
