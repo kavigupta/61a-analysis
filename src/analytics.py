@@ -11,6 +11,8 @@ def compensate_for_grader_means(evals, z_thresh=1):
     Compensates for grader means by subtracting each grader's average grades per problem. Eliminates
         individuals for whom the graders are unusual.
     """
+    if not evals.evaluation_for(list(evals.emails)[0]).means_need_compensation:
+        return evals
     problematic = set(_identify_problematic_ranges(evals, z_thresh))
     filt = evals.remove(problematic)
     zeroed = filt.zero_meaned()

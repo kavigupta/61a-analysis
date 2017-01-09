@@ -13,6 +13,7 @@ from constants import DATA_DIR
 from tools import cached_property
 
 class Evaluation:
+    means_need_compensation = True
     """
     A set of questions for a given individual
     """
