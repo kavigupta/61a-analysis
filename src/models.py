@@ -35,7 +35,7 @@ class Model(metaclass=ABCMeta):
         """
         pass
 
-def plausible_parameters(true_grades, true_seats, summary, model, granularity, n_trials):
+def plausible_parameters(true_grades, true_seats, model, summary, granularity, n_trials):
     # pylint: disable=R0913
     """
     Inputs:
