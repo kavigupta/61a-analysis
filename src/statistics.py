@@ -16,19 +16,27 @@ def permutation_test(partition, summary, number):
     value = summary(partition.group_a, partition.group_b)
     distribution = [summary(a, b)
                     for a, b in _permute(partition.group_a, partition.group_b, number)]
+    return PermutationReport(value, distribution, p_value(value, distribution))
+
+def p_value(value, distribution):
+    """
+    Returns a p value of a given value against a given distribution. I.e., returns 2 times the
+        size of the tail (with the given value included as if it were not already in the
+        distribution).
+    """
     n_greater = len([x for x in distribution if x >= value])
     n_smaller = len([x for x in distribution if x <= value])
-    p_value = (1 + min(n_greater, n_smaller)) * 2 / (1 + number)
-    return PermutationReport(value, distribution, p_value)
+    p_val = (1 + min(n_greater, n_smaller)) * 2 / (1 + len(distribution))
+    return min(p_val, 1)
 
 class PermutationReport:
     """
     Represents a report to be delivered about a permutation test.
     """
-    def __init__(self, value, distribution, p_value):
+    def __init__(self, value, distribution, p_val):
         self.__val = value
         self.__distr = distribution
-        self.__p = p_value
+        self.__p = p_val
     def report(self, summary_name, title=None, path=None):
         """
         Perform the report.
