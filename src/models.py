@@ -2,13 +2,13 @@
 A module for handling models.
 """
 
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 import numpy as np
 
 from statistics import p_value, Partition
 from analytics import all_pairs, compensate_for_grader_means
 
-class Model(meta=ABCMeta):
+class Model(metaclass=ABCMeta):
     """
     Represents the abstract concept of a model, which has a parameter and a way to generate grades.
     """
