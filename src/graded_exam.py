@@ -2,9 +2,9 @@
 A set of classes for handling graded exams
 """
 from collections import defaultdict
-from tools import cached_property
-
 import numpy as np
+
+from tools import cached_property
 
 class ExamQuestion:
     """
@@ -91,12 +91,21 @@ class ExamGrades:
                 for ev in self.evaluation_for(email).evals
                 for x in ev.complete_score.rubric_items]
     def change_grades(self, new_evals_per_email):
+        """
+        Outputs a new ExamGrades object with the given evaluations per email dictionary.
+        """
         return ExamGrades(self.__problem_names, self.__location_per_email, new_evals_per_email)
     @cached_property
     def max_score(self):
+        """
+        Outputs the maximum score any student acheived on this exam
+        """
         return max(x.score for x in self.__evaluation_per_email.values())
     @cached_property
     def mean_score(self):
+        """
+        Outputs the mean score any student acheived on this exam
+        """
         return np.mean([x.score for x in self.__evaluation_per_email.values()])
     @staticmethod
     def create(problem_names, grades_per_index):

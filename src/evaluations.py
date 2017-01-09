@@ -13,10 +13,10 @@ from constants import DATA_DIR
 from tools import cached_property
 
 class Evaluation:
-    means_need_compensation = True
     """
     A set of questions for a given individual
     """
+    means_need_compensation = True
     def __init__(self, name, email, *evals):
         self.name = name
         self.email = email

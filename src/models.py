@@ -77,11 +77,11 @@ def score_diff_summary(grades, seats):
     return np.mean([x.abs_score_diff for x in parts.group_a]) \
                 - np.mean([x.abs_score_diff for x in parts.group_b])
 
-class PointEvaluation:
-    means_need_compensation = False
+class PointEvaluation: # pylint: disable=R0903
     """
     Represents a Mock Evaluation with each point being an independent item
     """
+    means_need_compensation = False
     def __init__(self, points):
         self.score = sum(points)
         self.points = points
