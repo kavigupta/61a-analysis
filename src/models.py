@@ -14,14 +14,19 @@ class Model(metaclass=ABCMeta):
     """
     def __init__(self, environment):
         self._environment = environment
-    @abstractmethod
     def create_grades(self, seating_chart):
         """
-        Creates a set of grades for the given seating chart.
+        Creates an ExamGrades at random for the given seating chart.
+        """
+        return self._environment.change_grades(dict(self._get_grades(seating_chart)))
+    @abstractmethod
+    def _get_grades(self, seating_chart):
+        """
+        Randomly generates a generator (email, Evaluation) for the given exam.
         """
         pass
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def parameters(granularity):
         """
         Gets a set of parameters to run the model under.
