@@ -3,8 +3,10 @@ A module for handling models.
 """
 
 from abc import abstractmethod
+import numpy as np
 
-from statistics import p_value
+from statistics import p_value, Partition
+from analytics import all_pairs, compensate_for_grader_means
 
 class Model(meta=ABCMeta):
     """
@@ -54,3 +56,16 @@ def plausible_parameters(true_grades, true_seats, summary, model, granularity, n
             model_grades = current_model.create_grades(true_seats)
             model_values.append(summary(model_grades, true_seats))
         yield param, p_value(true_value, model_values)
+
+def score_diff_summary(grades, seats):
+    """
+    A summary statistic representing the difference in mean absolute score difference between the
+        adjacent and non-adjacent groups of pairs of students.
+    """
+    zero_meaned = compensate_for_grader_means(grades)
+    non_time_adjacents = list(pair
+                              for pair in all_pairs(zero_meaned, seats, 2)
+                              if pair.are_same_room and not pair.are_time_adjacent)
+    parts = Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent)
+    return np.mean([x.abs_score_diff for x in parts.group_a]) \
+                - np.mean([x.abs_score_diff for x in parts.group_b])
