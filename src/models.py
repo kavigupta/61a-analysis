@@ -54,13 +54,14 @@ def plausible_parameters(true_grades, true_seats, summary, model, granularity, n
             P[summary=given_summary | model(parameter) is true]
     """
     true_value = summary(true_grades, true_seats)
-    for param in model.parameters(granularity):
-        current_model = model(param)
+    for params in model.parameters(granularity):
+        current_model = model(true_grades, *params)
         model_values = []
         for _ in range(n_trials):
             model_grades = current_model.create_grades(true_seats)
             model_values.append(summary(model_grades, true_seats))
-        yield param, p_value(true_value, model_values)
+        p_val = p_value(true_value, model_values)
+        yield params, p_val, PermutationReport(true_value, model_values, p_val)
 
 def score_diff_summary(grades, seats):
     """
