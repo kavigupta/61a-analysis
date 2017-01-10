@@ -91,5 +91,24 @@
         
         In this case, the difference is the opposite as above, because a higher correlation
             corresponds to a smaller absolute difference.
+    \section{Model For Academic Dishonesty}
+        \subsection{Score-Independent, Binary Cheater, Random Cheat-Selection, Model}
+            Assume that some fixed fraction $c$ of the students cheat by copying exactly $k$
+                randomly selected points worth of material from a person sitting next to them (also
+                selected randomly). Assume that non-cheating students get each point independently
+                with probability $p$. Further assume that cheating students are located randomly.
+
+            Using known exam data, we can approximate $p$ simply by taking the average score divided
+                by the total number of points.
+
+            \begin{figure}[h!]
+                \centering
+                \includegraphics[width=\textwidth]{img/score-indepenent-not-working.png}
+            \end{figure}
+
+
+            Unfortunately, any model generated using these does not fit the data. This is because
+                the variance in this model is far smaller than the variance in the actual data.
+
 
 \end{document}

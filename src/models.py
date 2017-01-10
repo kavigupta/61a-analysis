@@ -3,8 +3,9 @@ A module for handling models.
 """
 
 from abc import abstractmethod, ABCMeta
+from math import floor
 import numpy as np
-from numpy.random import random
+from numpy.random import random, choice
 
 from statistics import p_value, Partition, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
@@ -103,3 +104,36 @@ class ScoreIndependentModel(Model):
     @staticmethod
     def parameters(_):
         return [()]
+
+def binary_cheater(base_model_type, params):
+    class BinaryCheaterModel(Model):
+        def __init__(self, environment, percent_cheaters, ratio_cheating):
+            super().__init__(environment)
+            self.__n_cheaters = round(len(environment.emails) * percent_cheaters)
+            self.__ratio_cheating = ratio_cheating
+            self.__base_model = base_model_type(environment, *params)
+        def _get_grades(self, seats):
+            grades = dict(self.__base_model._get_grades(seats)) # pylint: disable=W0212
+            cheaters = choice(list(grades), size=self.__n_cheaters, replace=False)
+            for cheat in cheaters:
+                if cheat not in grades:
+                    continue
+                marks = list(x for x in seats.adjacent_to(cheat) if x in grades)
+                if len(marks) == 0:
+                    continue
+                mark = choice(marks)
+                indices = choice(len(grades[cheat].points),
+                                 floor(self.__ratio_cheating * len(grades[cheat].points)))
+                if len(indices) == 0:
+                    continue
+                for index in indices:
+                    grades[cheat].points[index] = grades[mark].points[index]
+            return grades.items()
+        @staticmethod
+        def parameters(granularity):
+            n_pc = floor(granularity ** (2/3))
+            n_k = granularity // n_pc
+            for percent_cheaters in np.linspace(0, 1, n_pc):
+                for percent_cheating in np.linspace(0, 1, n_k):
+                    yield percent_cheaters, percent_cheating
+    return BinaryCheaterModel
