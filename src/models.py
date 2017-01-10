@@ -87,8 +87,15 @@ class PointEvaluation: # pylint: disable=R0903
     """
     means_need_compensation = False
     def __init__(self, points):
-        self.score = sum(points)
         self.points = points
+        self.score = None
+        self.recalculate_grade()
+    def recalculate_grade(self):
+        """
+        Recalculate the grade as the sum of the points. Necessary if an external source messes with
+            the points.
+        """
+        self.score = sum(self.points)
 
 class ScoreIndependentModel(Model):
     """
@@ -143,6 +150,7 @@ def binary_cheater(base_model_type, params):
                     continue
                 for index in indices:
                     grades[cheat].points[index] = grades[mark].points[index]
+                grades[cheat].recalculate_grade()
             return grades.items()
         @staticmethod
         def parameters(granularity):
