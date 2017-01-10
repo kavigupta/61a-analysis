@@ -14,6 +14,7 @@ from statistics import permutation_test, Partition
 from tools import TempParams
 from tools import show_or_save
 from graphics import TerminalProgressBar
+from models import ScoreIndependentModel
 
 def grader_comparison_report():
     """
@@ -33,6 +34,18 @@ def grader_comparison_report():
                               zero_meaned, seats,
                               TerminalProgressBar,
                               path="report/img/permutation-test-abs-difference.png")
+    score_indepenent_hist(evals, seats, path="report/img/score-indepenent-not-working.png")
+
+def score_indepenent_hist(evals, seats, path):
+    plt.figure()
+    sim = ScoreIndependentModel(evals).create_grades(seats)
+    plt.hist([evals.evaluation_for(x).score for x in evals.emails], color="red", alpha=0.4, label="Actual Data")
+    plt.hist([sim.evaluation_for(x).score for x in sim.emails], color="blue", alpha=0.4, label="Score Independent Model")
+    lgd = plt.legend(bbox_to_anchor=(1.5, 1))
+    plt.xlabel("Score")
+    plt.ylabel("Frequency")
+    plt.title("Score Independent Model Scores vs. Real Scores")
+    show_or_save(path, lgd)
 
 def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, path=None): #pylint: disable=C0103
     """
