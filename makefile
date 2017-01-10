@@ -21,3 +21,4 @@ tests:
 clean:
 	rm report_images
 	rm report/measure_academic_dishonesty.pdf
+	rm report/img/*
