@@ -5,7 +5,7 @@ A module for handling models.
 from abc import abstractmethod, ABCMeta
 from math import floor
 import numpy as np
-from numpy.random import random, choice
+from numpy.random import random, choice, normal
 
 from statistics import p_value, Partition, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
@@ -122,6 +122,24 @@ class ScoreIndependentModel(Model):
     def name():
         return "Score Independent Model"
 
+class QuestionIndependentModel(Model):
+    """
+    A simple model where every question is assumed to be independent
+    """
+    def __init__(self, environment):
+        super().__init__(environment)
+        self.__mean_stds = []
+        for _, question in environment:
+            self.__mean_stds.append((question.mean_score.score, question.std_score.score))
+    def _get_grades(self, _):
+        for email in self._environment.emails:
+            yield email, PointEvaluation([normal(m, s) for m, s in self.__mean_stds])
+    @staticmethod
+    def parameters(_):
+        return [()]
+    @staticmethod
+    def name():
+        return "Question Independent Model"
 
 def binary_cheater(base_model_type, params):
     """

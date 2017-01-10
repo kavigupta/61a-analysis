@@ -14,7 +14,7 @@ from statistics import permutation_test, Partition
 from tools import TempParams
 from tools import show_or_save
 from graphics import TerminalProgressBar
-from models import ScoreIndependentModel
+from models import ScoreIndependentModel, QuestionIndependentModel
 
 def grader_comparison_report():
     """
@@ -34,7 +34,7 @@ def grader_comparison_report():
                               zero_meaned, seats,
                               TerminalProgressBar,
                               path="report/img/permutation-test-abs-difference.png")
-    model_grades_hist((ScoreIndependentModel,),
+    model_grades_hist((ScoreIndependentModel, QuestionIndependentModel),
                       evals, seats, path="report/img/independents-not-working.png")
 
 def model_grades_hist(models, evals, seats, path):
