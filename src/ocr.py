@@ -25,16 +25,17 @@ def classify(image, people_class, max_classify_distance=1, min_nonclassify_dista
             return None
     return result
 
-def setup_ocr(raw_data):
+def setup_ocr(raw_data, progress):
     """
     Grabs names from a pdf to an image
     """
     system("unzip {} -d {}/extract".format(raw_data, DATA_DIR))
     base = DATA_DIR + "/extract/"
     mainfolder = base + listdir(base)[0]
-    for index, path in enumerate(sorted(listdir(mainfolder))):
-        if index % 100 == 0:
-            print("*", end="", flush=True)
+    files = sorted(listdir(mainfolder))
+    p_bar = progress(len(files))
+    for index, path in enumerate(files):
+        p_bar.update(index)
         fullpath = mainfolder + "/" + path
         system("mkdir {}/ocr".format(DATA_DIR))
         basic_format = r"pdftoppm -png -f 3 -l 3 -x 170 -y %s -W 900 -H 100 {} > {}/ocr/%s{}.png" \

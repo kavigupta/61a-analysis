@@ -8,14 +8,14 @@ from matplotlib import pyplot as plt
 import numpy as np
 from tools import show_or_save
 
-def permutation_test(partition, summary, number):
+def permutation_test(partition, summary, number, progress):
     """
     Checks whether the differences in the SUMMARY statistic over the two PARITIONs of the data are
         real or merely the result of random chance. Takes NUMBER samples.
     """
     value = summary(partition.group_a, partition.group_b)
     distribution = [summary(a, b)
-                    for a, b in _permute(partition.group_a, partition.group_b, number)]
+                    for a, b in _permute(partition.group_a, partition.group_b, number, progress)]
     return PermutationReport(value, distribution, p_value(value, distribution))
 
 def p_value(value, distribution):
@@ -78,9 +78,10 @@ class Partition: # pylint: disable=R0903
         return Partition([x for x in population if decision(x)],
                          [x for x in population if not decision(x)])
 
-def _permute(sample_a, sample_b, number):
+def _permute(sample_a, sample_b, number, progress):
+    p_bar = progress(number)
     combined = list(sample_a) + list(sample_b)
-    for _ in range(number):
-        print("*", end="", flush=True)
+    for index in range(number):
+        p_bar.update(index)
         shuffle(combined)
         yield combined[:len(sample_a)], combined[len(sample_a):]

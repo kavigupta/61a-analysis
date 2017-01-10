@@ -11,6 +11,7 @@ from constants import DATA_DIR
 from evaluations import proc_evaluations
 from analytics import compensate_for_grader_means, all_pairs, ExamPair, _unusualness
 from graded_exam import ExamQuestion
+from graphics import NoProgressBar
 
 
 EVALS_SAMPLE = proc_evaluations('data/test-evals.zip')
@@ -42,7 +43,7 @@ class TestAnalytics(TestCase):
         """
         Tests the all_correlations method by exact checking on a small test case.
         """
-        corrs = list(all_pairs(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1))
+        corrs = list(all_pairs(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1, NoProgressBar))
         self.assertEqual(6, len(corrs))
         expect_cors = {
             ExamPair(EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % first),

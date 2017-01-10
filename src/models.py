@@ -64,14 +64,14 @@ def plausible_parameters(true_grades, true_seats, model, summary, granularity, n
         p_val = p_value(true_value, model_values)
         yield params, p_val, PermutationReport(true_value, model_values, p_val)
 
-def score_diff_summary(grades, seats):
+def score_diff_summary(grades, seats, progress):
     """
     A summary statistic representing the difference in mean absolute score difference between the
         adjacent and non-adjacent groups of pairs of students.
     """
     zero_meaned = compensate_for_grader_means(grades)
     non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2)
+                              for pair in all_pairs(zero_meaned, seats, 2, progress)
                               if pair.are_same_room and not pair.are_time_adjacent)
     parts = Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent)
     return np.mean([x.abs_score_diff for x in parts.group_a]) \

@@ -13,6 +13,7 @@ from seating_chart import UNKNOWN, SeatingChart
 from statistics import permutation_test, Partition
 from tools import TempParams
 from tools import show_or_save
+from graphics import TerminalProgressBar
 
 def grader_comparison_report():
     """
@@ -26,24 +27,27 @@ def grader_comparison_report():
     by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
     by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
     permutation_test_of_pairs(lambda x: x.correlation, "Correlation", zero_meaned, seats,
+                              TerminalProgressBar,
                               path="report/img/permutation-test-correlation.png")
     permutation_test_of_pairs(lambda x: x.abs_score_diff, "Absolute Score Difference",
                               zero_meaned, seats,
+                              TerminalProgressBar,
                               path="report/img/permutation-test-abs-difference.png")
 
-def permutation_test_of_pairs(statistic, name, zero_meaned, seats, path=None): #pylint: disable=C0103
+def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, path=None): #pylint: disable=C0103
     """
     Runs a permutation test on the differences between means of the given statistic in the adjacent
         and non-adjacent pairs of students
     """
     non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2)
+                              for pair in all_pairs(zero_meaned, seats, 2, progress)
                               if pair.are_same_room and not pair.are_time_adjacent)
     plt.figure()
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
         summary=lambda x, y: np.mean(
             [statistic(u) for u in x]) - np.mean([statistic(u) for u in y]),
+        progress=progress,
         number=100)
     report.report(
         summary_name="Difference in Mean %s Between Adjacent and Non-Adjacent Group" % name,

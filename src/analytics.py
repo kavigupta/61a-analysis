@@ -58,14 +58,14 @@ class ExamPair: # pylint: disable=R0903
                      self.are_space_adjacent,
                      self.are_same_room))
 
-def all_pairs(graded_exam, seating_chart, time_delta):
+def all_pairs(graded_exam, seating_chart, time_delta, progress):
     """
     Yields an iterable of all pairs between individuals.
     """
     emails = list(graded_exam.emails)
+    p_bar = progress(len(emails))
     for index_x, email_x in enumerate(emails):
-        if index_x % 100 == 0:
-            print(index_x, len(emails))
+        p_bar.update(index_x)
         if email_x not in graded_exam.emails:
             continue
         eval_x = graded_exam.evaluation_for(email_x)
