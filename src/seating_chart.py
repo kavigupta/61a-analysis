@@ -257,7 +257,6 @@ class Location(AbstractLocation):
         match = re.search(r"(Front|Desk).*", seat)
         if match:
             return UNKNOWN # TODO handle these better
-        print(seat)
         raise RuntimeError(seat)
     def __repr__(self):
         return "Location(room={!r}, row={!r}, column={!r})".format(self.room, self.row, self.column)
