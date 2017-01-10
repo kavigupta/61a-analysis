@@ -35,5 +35,5 @@ class TerminalProgressBar(ProgressBar):
         super().__init__(max_value)
         self.__total_dashes = n_cols - 2
     def update(self, new_value):
-        dashes = self.__total_dashes * new_value // self._max_value
-        print("\r|{}{}|".format("-" * dashes, "-" * (self.__total_dashes - dashes)))
+        dashes = round(self.__total_dashes * (new_value + 1) / self._max_value)
+        print("\r|{}{}|".format("-" * dashes, " " * (self.__total_dashes - dashes)), end="")
