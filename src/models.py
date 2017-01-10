@@ -37,6 +37,13 @@ class Model(metaclass=ABCMeta):
         granularity: the number of parameters to generate.
         """
         pass
+    @staticmethod
+    @abstractmethod
+    def name():
+        """
+        The model's name.
+        """
+        pass
 
 def plausible_parameters(true_grades, true_seats, model, summary, granularity, n_trials, progress):
     # pylint: disable=R0913
@@ -111,6 +118,10 @@ class ScoreIndependentModel(Model):
     @staticmethod
     def parameters(_):
         return [()]
+    @staticmethod
+    def name():
+        return "Score Independent Model"
+
 
 def binary_cheater(base_model_type, params):
     """
@@ -159,4 +170,7 @@ def binary_cheater(base_model_type, params):
             for percent_cheaters in np.linspace(0, 1, n_pc):
                 for percent_cheating in np.linspace(0, 1, n_k):
                     yield percent_cheaters, percent_cheating
+        @staticmethod
+        def name():
+            return "Binary Cheater Model [based on %s]" % base_model_type.name()
     return BinaryCheaterModel
