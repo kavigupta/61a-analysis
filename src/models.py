@@ -9,7 +9,7 @@ from numpy.random import random, choice
 
 from statistics import p_value, Partition, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
-from graphics import NoProgressBar, TerminalProgressBar
+from graphics import NoProgressBar
 
 class Model(metaclass=ABCMeta):
     """
@@ -106,7 +106,22 @@ class ScoreIndependentModel(Model):
         return [()]
 
 def binary_cheater(base_model_type, params):
+    """
+    Takes a baseline PointEvaluation-generating model and makes some of the people cheaters.
+
+    Inputs:
+        base_model_type: the type of model to use by default.
+        params: the parameters to shove into the baseline model.
+    """
+    #TODO params be generated rather than taken as arguments
     class BinaryCheaterModel(Model):
+        """
+        A model with two parameters that accounts for cheaters.
+
+        Parameters:
+            percent_cheaters: the ratio of students who cheat
+            ratio_cheating: the fraction of exam parts / points they cheat on
+        """
         def __init__(self, environment, percent_cheaters, ratio_cheating):
             super().__init__(environment)
             self.__n_cheaters = round(len(environment.emails) * percent_cheaters)
