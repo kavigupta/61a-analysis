@@ -12,7 +12,7 @@
 \section{General Strategy}
     The general strategy is to look at similarities between scores of students sitting next to each
         other against the similarities between scores of students sitting not next to each other.
-    
+
     The result can be then used to estimate the number of students committing academic dishonesty
         using a model.
 
@@ -36,11 +36,11 @@
             students near each other having more similar profiles, artificially. We control for graders
             by subtracting out from each student's individual problem scores and rubric items the mean
             given by a grader.
-            
+
         Any student who had at least one problem that was either graded by a grader who had graded fewer
             than ten problems (not enough of a track record) or who had an abnormal pattern of rubric item
             grades\footnote{Unusualness of a grader is defined as
-                $$u = \sum_k \left|\frac{x_k - \mu_k}{\sigma_k}\right|$$ where $x_k$ is the mean for the 
+                $$u = \sum_k \left|\frac{x_k - \mu_k}{\sigma_k}\right|$$ where $x_k$ is the mean for the
                 given grader of the $k$th rubric item, and $\mu_k, \sigma_k$ are the mean and standard
                 deviation for that rubric item in general}.
     \subsection{Sequencing}
@@ -88,7 +88,7 @@
             \centering
             \includegraphics[width=0.5\textwidth]{img/permutation-test-abs-difference.png}
         \end{figure}
-        
+
         In this case, the difference is the opposite as above, because a higher correlation
             corresponds to a smaller absolute difference.
     \section{Model For Academic Dishonesty}
