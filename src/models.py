@@ -8,6 +8,7 @@ from numpy.random import random
 
 from statistics import p_value, Partition, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
+from graphics import NoProgressBar, TerminalProgressBar
 
 class Model(metaclass=ABCMeta):
     """
@@ -36,7 +37,7 @@ class Model(metaclass=ABCMeta):
         """
         pass
 
-def plausible_parameters(true_grades, true_seats, model, summary, granularity, n_trials):
+def plausible_parameters(true_grades, true_seats, model, summary, granularity, n_trials, progress):
     # pylint: disable=R0913
     """
     Inputs:
@@ -55,7 +56,9 @@ def plausible_parameters(true_grades, true_seats, model, summary, granularity, n
             P[summary=given_summary | model(parameter) is true]
     """
     true_value = summary(true_grades, true_seats)
-    for params in model.parameters(granularity):
+    p_bar = progress(granularity)
+    for index, params in enumerate(model.parameters(granularity)):
+        p_bar.update(index)
         current_model = model(true_grades, *params)
         model_values = []
         for _ in range(n_trials):
@@ -64,14 +67,14 @@ def plausible_parameters(true_grades, true_seats, model, summary, granularity, n
         p_val = p_value(true_value, model_values)
         yield params, p_val, PermutationReport(true_value, model_values, p_val)
 
-def score_diff_summary(grades, seats, progress):
+def score_diff_summary(grades, seats):
     """
     A summary statistic representing the difference in mean absolute score difference between the
         adjacent and non-adjacent groups of pairs of students.
     """
     zero_meaned = compensate_for_grader_means(grades)
     non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2, progress)
+                              for pair in all_pairs(zero_meaned, seats, 2, NoProgressBar)
                               if pair.are_same_room and not pair.are_time_adjacent)
     parts = Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent)
     return np.mean([x.abs_score_diff for x in parts.group_a]) \
