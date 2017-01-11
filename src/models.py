@@ -66,12 +66,38 @@ def plausible_parameters(true_grades, true_seats, model, summary, granularity, n
     p_bar = progress(granularity)
     for index, params in enumerate(model.parameters(granularity)):
         p_bar.update(index)
-        current_model = model(true_grades, *params)
-        model_values = [summary(current_model.create_grades(true_seats),
-                                true_seats)
-                        for _ in range(n_trials)]
-        p_val = p_value(true_value, model_values)
-        yield params, p_val, PermutationReport(true_value, model_values, p_val)
+        yield model_on_params(true_grades, true_seats, true_value, model, params, summary, n_trials)
+
+def model_on_params(true_grades, true_seats, true_value, model, params, summary, n_trials):
+    """
+    Run the given model on the given parameters.
+
+    Inputs:
+        true_grades: ExamGrades
+            the actual grade distribution for the course
+        true_seats: SeatingChart
+            the actual seating chart for the course
+        true_value:
+            the result of calling `summary(true_grades, true_seats)` (for the purpose of efficiency
+                over repeated calls)
+        model: Class extending Model
+            which is of interest
+        params: paramtype(model)
+            the parameters to plug into the model
+        summary: (ExamGrades, SeatingChart) -> Float
+            which we are testing
+        granularity: Integer
+            the number of parameter values to try
+
+    Output:
+        (parameter, probability, report). see plausible_parameters for more info
+    """
+    current_model = model(true_grades, *params)
+    model_values = [summary(current_model.create_grades(true_seats),
+                            true_seats)
+                    for _ in range(n_trials)]
+    p_val = p_value(true_value, model_values)
+    return params, p_val, PermutationReport(true_value, model_values, p_val)
 
 def score_diff_summary(grades, seats):
     """
