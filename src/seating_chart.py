@@ -46,9 +46,11 @@ class SeatingChart:
         """
         Returns whether FIRST and SECOND are in the same room.
         """
-        if first not in self.__seating_chart or  second not in self.__seating_chart:
-            return None
-        return self.room_for(first) == self.room_for(second)
+        first_room = self.room_for(first)
+        second_room = self.room_for(second)
+        if first_room is None or second_room is None:
+            return False
+        return first_room.room == second_room.room
     @property
     def emails_by_room(self):
         return self.__by_room.items()
@@ -69,7 +71,10 @@ class SeatingChart:
         """
         Gets the room in which the person with that email lies.
         """
-        return self.__seating_chart[email].room
+        loc = self.__seating_chart.get(email, None)
+        if loc is None:
+            return None
+        return loc.room
     def y_region(self, email):
         """
         Get the y region (top, middle, bottom) of the given email.
