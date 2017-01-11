@@ -63,7 +63,7 @@ class PermutationReport:
     def __repr__(self):
         return "PermutationReport({}, {}, {})".format(self.__val, self.__distr, self.__p)
 
-class Partition: # pylint: disable=R0903
+class Partition:
     """
     A partition of a set of data into two groups.
     """

@@ -18,12 +18,11 @@ def compensate_for_grader_means(evals, z_thresh=1):
     zeroed = filt.zero_meaned()
     return zeroed
 
-class ExamPair: # pylint: disable=R0903
+class ExamPair:
     """
     Structure representing a correlation between exam scores, as well as metadata on location.
     """
     def __init__(self, first, second, are_time_adjacent, are_space_adjacent, are_same_room):
-        # pylint: disable=R0913
         self.are_time_adjacent = are_time_adjacent
         self.first = first
         self.second = second

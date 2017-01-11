@@ -55,7 +55,7 @@ def model_grades_hist(models, evals, seats, path):
     plt.title("Model Scores Comparison")
     show_or_save(path, lgd)
 
-def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, path=None): #pylint: disable=R0913
+def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, path=None):
     """
     Runs a permutation test on the differences between means of the given statistic in the adjacent
         and non-adjacent pairs of students

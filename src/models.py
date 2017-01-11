@@ -46,7 +46,6 @@ class Model(metaclass=ABCMeta):
         pass
 
 def plausible_parameters(true_grades, true_seats, model, summary, granularity, n_trials, progress):
-    # pylint: disable=R0913
     """
     Inputs:
         true_grades: ExamGrades
@@ -91,7 +90,7 @@ def score_diff_summary(grades, seats):
             non_space_adj.append(pair.abs_score_diff)
     return np.mean(space_adj) - np.mean(non_space_adj)
 
-class PointEvaluation: # pylint: disable=R0903
+class PointEvaluation:
     """
     Represents a Mock Evaluation with each point being an independent item
     """

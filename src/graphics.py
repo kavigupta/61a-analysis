@@ -3,8 +3,6 @@ A module for various graphical functions
 """
 from abc import ABCMeta, abstractmethod
 
-# pylint: disable=R0903
-
 class ProgressBar(metaclass=ABCMeta):
     """
     Represent the abstract notion of a progress bar

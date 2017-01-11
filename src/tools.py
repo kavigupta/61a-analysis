@@ -11,7 +11,7 @@ def flatten(vals):
     """
     return [x for y in vals for x in y]
 
-class TempParams: # pylint: disable=R0903
+class TempParams:
     """
     Allows for setting parameters temporarily (only font right now).
     """
@@ -34,7 +34,7 @@ def show_or_save(path, lgd):
     else:
         plt.savefig(path, bbox_extra_artists=(lgd,), bbox_inches='tight', dpi=300)
 
-class cached_property: # pylint: disable=C0103, R0903
+class cached_property: # pylint: disable=C0103
     """
     Similar to `property`, but caches the result.
     """
