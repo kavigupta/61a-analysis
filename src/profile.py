@@ -19,7 +19,7 @@ def main(arg):
 def profile_plausible_params(evals, seats):
     list(plausible_parameters(evals, seats,
                                   binary_cheater(RandomSeatingModel, ()),
-                                  score_diff_summary, 20, 1, TerminalProgressBar))
+                                  score_diff_summary, 1, 10, TerminalProgressBar))
 
 if __name__ == '__main__':
     main(argv[1])
