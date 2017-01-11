@@ -24,4 +24,5 @@ clean:
 	rm report/img/*
 
 profile:
-	python -m cProfile -s cumtime src/profile.py --plausible-params > log
+	mv -f prof.log prof-bak.log
+	python -m cProfile -s cumtime src/profile.py --plausible-params > prof.log
