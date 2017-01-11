@@ -6,9 +6,10 @@ from graphics import TerminalProgressBar
 
 from evaluations import proc_evaluations
 from seating_chart import SeatingChart
+from constants import DATA_DIR
 
-EVALS = proc_evaluations('/home/kavi/data/real-data/Midterm_1_evaluations.zip')
-SEATS = SeatingChart('/home/kavi/data/real-data/mt1_seats.csv')
+EVALS = proc_evaluations('%s/real-data/Midterm_1_evaluations.zip' % DATA_DIR)
+SEATS = SeatingChart('%s/real-data/mt1_seats.csv' % DATA_DIR)
 
 for result in plausible_parameters(EVALS, SEATS,
                                    binary_cheater(RandomSeatingModel, ()),
