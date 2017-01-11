@@ -85,16 +85,17 @@ def _pairs_per_individual(graded_exam, seating_chart, time_delta, progress, emai
             if email_y not in graded_exam.emails:
                 continue
             if not known_same_room:
-                room_y = seating_chart.room_for(email_y)
-                same_room = room_x == room_y
+                same_room = room_x == seating_chart.room_for(email_y)
             else:
                 same_room = True
             time_adjacent = abs(graded_exam.time_diff(email_x, email_y)) <= time_delta
             if require_not_time_adj and time_adjacent:
                 continue
-            eval_y = graded_exam.evaluation_for(email_y)
-            space_adjacent = seating_chart.are_adjacent(email_x, email_y)
-            yield ExamPair(eval_x, eval_y, time_adjacent, space_adjacent, same_room)
+            yield ExamPair(eval_x,
+                           graded_exam.evaluation_for(email_y),
+                           time_adjacent,
+                           seating_chart.are_adjacent(email_x, email_y),
+                           same_room)
 
 
 def _unusualness(grader, question):
