@@ -58,25 +58,39 @@ class ExamPair: # pylint: disable=R0903
                      self.are_space_adjacent,
                      self.are_same_room))
 
-def all_pairs(graded_exam, seating_chart, time_delta, progress):
+def all_pairs(graded_exam, seating_chart, time_delta, progress, require_same_room):
     """
     Yields an iterable of all pairs between individuals.
     """
-    emails = list(graded_exam.emails)
+    if require_same_room:
+        for _, in_room in seating_chart.emails_by_room:
+            yield from _pairs_per_individual(graded_exam, seating_chart, time_delta, progress, in_room, True)
+    else:
+        emails = list(graded_exam.emails)
+        yield from _pairs_per_individual(graded_exam, seating_chart, time_delta, progress, emails, False)
+
+def _pairs_per_individual(graded_exam, seating_chart, time_delta, progress, emails, known_same_room):
     p_bar = progress(len(emails))
     for index_x, email_x in enumerate(emails):
         p_bar.update(index_x)
         if email_x not in graded_exam.emails:
             continue
         eval_x = graded_exam.evaluation_for(email_x)
+        if not known_same_room:
+            room_x = seating_chart.room_for(email_x)
         for email_y in emails[index_x+1:]:
             if email_y not in graded_exam.emails:
                 continue
+            if not known_same_room:
+                room_y = seating_chart.room_for(email_y)
+                same_room = room_x == room_y
+            else:
+                same_room = True
             eval_y = graded_exam.evaluation_for(email_y)
             time_adjacent = abs(graded_exam.time_diff(email_x, email_y)) <= time_delta
             space_adjacent = seating_chart.are_adjacent(email_x, email_y)
-            same_room = seating_chart.same_room(email_x, email_y)
             yield ExamPair(eval_x, eval_y, time_adjacent, space_adjacent, same_room)
+
 
 def _unusualness(grader, question):
     """

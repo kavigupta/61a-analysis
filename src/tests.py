@@ -43,7 +43,7 @@ class TestAnalytics(TestCase):
         """
         Tests the all_correlations method by exact checking on a small test case.
         """
-        corrs = list(all_pairs(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1, NoProgressBar))
+        corrs = list(all_pairs(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1, NoProgressBar, False))
         self.assertEqual(6, len(corrs))
         expect_cors = {
             ExamPair(EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % first),

@@ -82,8 +82,8 @@ def score_diff_summary(grades, seats):
     """
     zero_meaned = compensate_for_grader_means(grades)
     non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2, NoProgressBar)
-                              if pair.are_same_room and not pair.are_time_adjacent)
+                              for pair in all_pairs(zero_meaned, seats, 2, NoProgressBar, require_same_room=True)
+                              if not pair.are_time_adjacent)
     parts = Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent)
     return np.mean([x.abs_score_diff for x in parts.group_a]) \
                 - np.mean([x.abs_score_diff for x in parts.group_b])

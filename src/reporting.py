@@ -61,8 +61,8 @@ def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, pat
         and non-adjacent pairs of students
     """
     non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2, progress)
-                              if pair.are_same_room and not pair.are_time_adjacent)
+                              for pair in all_pairs(zero_meaned, seats, 2, progress, require_same_room=True)
+                              if not pair.are_time_adjacent)
     plt.figure()
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
