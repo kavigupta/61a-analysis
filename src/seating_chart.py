@@ -22,6 +22,14 @@ class SeatingChart:
         self.__file_loc = file_loc
         self.__seating_chart = _get_seating_chart(file_loc)
         self.__adjacency = _get_direction_dictionary(self.__seating_chart)
+        self.__by_room = {}
+        for email in self.emails:
+            room = self.room_for(email)
+            if room is None:
+                continue
+            if room not in self.__by_room:
+                self.__by_room[room] = []
+            self.__by_room[room].append(email)
     def __repr__(self):
         return "SeatingChart({!r})".format(self.__file_loc)
     def adjacent_to(self, email):
@@ -41,6 +49,9 @@ class SeatingChart:
         if first not in self.__seating_chart or  second not in self.__seating_chart:
             return None
         return self.room_for(first) == self.room_for(second)
+    @property
+    def emails_by_room(self):
+        return self.__by_room.items()
     def sideways_items(self, email):
         """
         Get the items sideways of the given email.
