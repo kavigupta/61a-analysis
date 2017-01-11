@@ -67,10 +67,9 @@ def plausible_parameters(true_grades, true_seats, model, summary, granularity, n
     for index, params in enumerate(model.parameters(granularity)):
         p_bar.update(index)
         current_model = model(true_grades, *params)
-        model_values = []
-        for _ in range(n_trials):
-            model_grades = current_model.create_grades(true_seats)
-            model_values.append(summary(model_grades, true_seats))
+        model_values = [summary(current_model.create_grades(true_seats),
+                                true_seats)
+                        for _ in range(n_trials)]
         p_val = p_value(true_value, model_values)
         yield params, p_val, PermutationReport(true_value, model_values, p_val)
 

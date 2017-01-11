@@ -349,8 +349,7 @@ def __normalize_columns_in_chart(seating_chart):
     Converts tuple columns into single numbers. Sets up minima and maxima for each column and places
         everything into Column objects.
     """
-    unknowns = [x for x in seating_chart if isinstance(x[1], UnknownLocation)]
-    yield from unknowns
+    yield from [x for x in seating_chart if isinstance(x[1], UnknownLocation)]
     knowns = [x for x in seating_chart if not isinstance(x[1], UnknownLocation)]
     knowns.sort(key=lambda x: x[1])
     def _normal_rows(sorted_by_room):
