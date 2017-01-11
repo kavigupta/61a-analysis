@@ -69,6 +69,7 @@ class ExamGrades:
         self.__problem_names = problem_names
         self.__location_per_email = location_per_email
         self.__evaluation_per_email = evaluation_per_email
+        self.__emails = set(evaluation_per_email.keys())
     def by_room(self, seating_chart):
         """
         Input: seating chart
@@ -138,7 +139,7 @@ class ExamGrades:
         """
         Get a set of emails of students who took this exam
         """
-        return self.__location_per_email.keys()
+        return self.__emails
     def evaluation_for(self, email):
         """
         Get the evaluation mapped to the given email.
