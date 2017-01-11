@@ -175,7 +175,7 @@ def binary_cheater(base_model_type, params):
         """
         def __init__(self, environment, percent_cheaters, ratio_cheating):
             super().__init__(environment)
-            self.__n_cheaters = round(len(environment.emails) * percent_cheaters)
+            self.__n_cheaters = int(round(len(environment.emails) * percent_cheaters))
             self.__ratio_cheating = ratio_cheating
             self.__base_model = base_model_type(environment, *params)
         def _get_grades(self, seats):
