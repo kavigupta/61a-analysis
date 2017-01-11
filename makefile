@@ -25,4 +25,4 @@ clean:
 
 profile:
 	mv -f prof.log prof-bak.log
-	python -m cProfile -s cumtime src/profile.py --plausible-params > prof.log
+	python -u -m cProfile -s cumtime src/profile.py --plausible-params > prof.log
