@@ -2,7 +2,7 @@
 A script to be run.
 """
 from models import plausible_parameters, binary_cheater, score_diff_summary, RandomSeatingModel
-from graphics import TerminalProgressBar
+from graphics import NoProgressBar
 
 from evaluations import proc_evaluations
 from seating_chart import SeatingChart
@@ -13,5 +13,5 @@ SEATS = SeatingChart('%s/real-data/mt1_seats.csv' % DATA_DIR)
 
 for result in plausible_parameters(EVALS, SEATS,
                                    binary_cheater(RandomSeatingModel, ()),
-                                   score_diff_summary, 1000, 200, TerminalProgressBar):
+                                   score_diff_summary, 1000, 200, NoProgressBar):
     print(result)
