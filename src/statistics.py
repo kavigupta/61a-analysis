@@ -60,7 +60,8 @@ class PermutationReport:
         Get the p-value for the difference in distributions.
         """
         return self.__p
-
+    def __repr__(self):
+        return "PermutationReport({}, {}, {})".format(self.__val, self.__distr, self.__p)
 
 class Partition: # pylint: disable=R0903
     """
