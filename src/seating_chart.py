@@ -30,13 +30,16 @@ class SeatingChart:
             if room not in self.__by_room:
                 self.__by_room[room] = []
             self.__by_room[room].append(email)
+        self.__adjacency_set = defaultdict(set)
+        for x, y in self.__adjacency.items():
+            self.__adjacency_set[x] = set(y.values())
     def __repr__(self):
         return "SeatingChart({!r})".format(self.__file_loc)
     def adjacent_to(self, email):
         """
         Gets all people adjacent to the given person.
         """
-        return list(self.__adjacency[email].values())
+        return self.__adjacency_set[email]
     def are_adjacent(self, first, second):
         """
         Checks whether FIRST and SECOND are adjacent.
