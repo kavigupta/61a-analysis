@@ -31,8 +31,8 @@ class SeatingChart:
                 self.__by_room[room] = []
             self.__by_room[room].append(email)
         self.__adjacency_set = defaultdict(set)
-        for x, y in self.__adjacency.items():
-            self.__adjacency_set[x] = set(y.values())
+        for email, result in self.__adjacency.items():
+            self.__adjacency_set[email] = set(result.values())
     def __repr__(self):
         return "SeatingChart({!r})".format(self.__file_loc)
     def adjacent_to(self, email):
@@ -56,6 +56,10 @@ class SeatingChart:
         return first_room.room == second_room.room
     @property
     def emails_by_room(self):
+        """
+        Output:
+            an iterable (room name, list of emails)
+        """
         return self.__by_room.items()
     def sideways_items(self, email):
         """

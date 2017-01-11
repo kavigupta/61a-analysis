@@ -7,7 +7,7 @@ from math import floor
 import numpy as np
 from numpy.random import random, choice, normal, shuffle
 
-from statistics import p_value, Partition, PermutationReport
+from statistics import p_value, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
 from graphics import NoProgressBar
 
@@ -80,7 +80,8 @@ def score_diff_summary(grades, seats):
         adjacent and non-adjacent groups of pairs of students.
     """
     zero_meaned = compensate_for_grader_means(grades)
-    non_time_adjacents = all_pairs(zero_meaned, seats, 2, NoProgressBar, require_same_room=True, require_not_time_adj=True)
+    non_time_adjacents = all_pairs(zero_meaned, seats, 2, NoProgressBar,
+                                   require_same_room=True, require_not_time_adj=True)
     space_adj = []
     non_space_adj = []
     for pair in non_time_adjacents:

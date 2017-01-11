@@ -41,11 +41,11 @@ def model_grades_hist(models, evals, seats, path):
     """
     Show the histogram for the score-independent and actual models.
     """
-    COLORS = ["red", "blue", "green"] * len(models)
+    colors = ["red", "blue", "green"] * len(models)
     plt.figure()
     plt.hist([evals.evaluation_for(x).score for x in evals.emails],
              color="white", alpha=0.4, label="Actual Data")
-    for model, color in zip(models, COLORS):
+    for model, color in zip(models, colors):
         sim = model(evals).create_grades(seats)
         plt.hist([sim.evaluation_for(x).score for x in sim.emails],
                  color=color, alpha=0.4, label=model.name())
@@ -60,8 +60,8 @@ def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, pat
     Runs a permutation test on the differences between means of the given statistic in the adjacent
         and non-adjacent pairs of students
     """
-    non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2, progress, require_same_room=True, require_not_time_adj=True))
+    non_time_adjacents = list(all_pairs(zero_meaned, seats, 2, progress,
+                                        require_same_room=True, require_not_time_adj=True))
     plt.figure()
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
