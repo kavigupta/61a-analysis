@@ -81,11 +81,15 @@ def score_diff_summary(grades, seats):
         adjacent and non-adjacent groups of pairs of students.
     """
     zero_meaned = compensate_for_grader_means(grades)
-    non_time_adjacents = list(pair
-                              for pair in all_pairs(zero_meaned, seats, 2, NoProgressBar, require_same_room=True, require_not_time_adj=True))
-    parts = Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent)
-    return np.mean([x.abs_score_diff for x in parts.group_a]) \
-                - np.mean([x.abs_score_diff for x in parts.group_b])
+    non_time_adjacents = all_pairs(zero_meaned, seats, 2, NoProgressBar, require_same_room=True, require_not_time_adj=True)
+    space_adj = []
+    non_space_adj = []
+    for pair in non_time_adjacents:
+        if pair.are_space_adjacent:
+            space_adj.append(pair.abs_score_diff)
+        else:
+            non_space_adj.append(pair.abs_score_diff)
+    return np.mean(space_adj) - np.mean(non_space_adj)
 
 class PointEvaluation: # pylint: disable=R0903
     """
@@ -199,6 +203,8 @@ def binary_cheater(base_model_type, params):
         def parameters(granularity):
             yield 0, 0
             granularity -= 1
+            if granularity == 0:
+                return
             n_pc = floor(granularity ** (2/3))
             n_k = granularity // n_pc
             for percent_cheaters in np.linspace(0, 1, n_pc + 1)[1:]:
