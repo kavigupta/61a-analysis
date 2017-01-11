@@ -10,8 +10,7 @@ from seating_chart import SeatingChart
 EVALS = proc_evaluations('/home/kavi/data/real-data/Midterm_1_evaluations.zip')
 SEATS = SeatingChart('/home/kavi/data/real-data/mt1_seats.csv')
 
-PARAMS = list(plausible_parameters(EVALS, SEATS,
+for result in plausible_parameters(EVALS, SEATS,
                                    binary_cheater(RandomSeatingModel, ()),
-                                   score_diff_summary, 64, 60, TerminalProgressBar))
-print("\n ANSWER FOLLOWS:")
-print(PARAMS)
+                                   score_diff_summary, 1000, 200, TerminalProgressBar):
+    print(result)
