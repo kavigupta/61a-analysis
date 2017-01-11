@@ -5,7 +5,7 @@ A module for handling models.
 from abc import abstractmethod, ABCMeta
 from math import floor
 import numpy as np
-from numpy.random import random, choice, normal
+from numpy.random import random, choice, normal, shuffle
 
 from statistics import p_value, Partition, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
@@ -141,6 +141,21 @@ class QuestionIndependentModel(Model):
     def name():
         return "Question Independent Model"
 
+class RandomSeatingModel(Model):
+    """
+    Randomly assigns students to seats.
+    """
+    def _get_grades(self, _):
+        evals = [self._environment.evaluation_for(email) for email in self._environment.emails]
+        shuffle(evals)
+        for evalu, email in zip(evals, self._environment.emails):
+            yield email, PointEvaluation([x.total_score for x in evalu.evals])
+    @staticmethod
+    def parameters(_):
+        return [()]
+    @staticmethod
+    def name():
+        return "Random Seating Model"
 def binary_cheater(base_model_type, params):
     """
     Takes a baseline PointEvaluation-generating model and makes some of the people cheaters.
