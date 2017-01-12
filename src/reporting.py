@@ -62,7 +62,7 @@ def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, pat
     """
     non_time_adjacents = list(all_pairs(zero_meaned, seats, 2, progress,
                                         require_same_room=True, require_not_time_adj=True))
-    plt.figure()
+    plt.figure(figsize=(8, 3))
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),
         summary=lambda x, y: np.mean(
