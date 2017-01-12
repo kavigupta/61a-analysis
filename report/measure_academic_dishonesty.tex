@@ -91,32 +91,31 @@
 
         In this case, the difference is the opposite as above, because a higher correlation
             corresponds to a smaller absolute difference.
-    \section{Model For Academic Dishonesty}
-        \subsection{Score-Independent, Binary Cheater, Random Cheat-Selection, Model}
-            Assume that some fixed fraction $c$ of the students cheat by copying exactly $k$
-                randomly selected points worth of material from a person sitting next to them (also
-                selected randomly). Assume that non-cheating students get each point independently
-                with probability $p$. Further assume that cheating students are located randomly.
+\section{Model For Academic Dishonesty}
+    \subsection{Score-Independent, Binary Cheater, Random Cheat-Selection, Model}
+        Assume that some fixed fraction $c$ of the students cheat by copying exactly $k$
+            randomly selected points worth of material from a person sitting next to them (also
+            selected randomly). Assume that non-cheating students get each point independently
+            with probability $p$. Further assume that cheating students are located randomly.
 
-            Using known exam data, we can approximate $p$ simply by taking the average score divided
-                by the total number of points.
+        Using known exam data, we can approximate $p$ simply by taking the average score divided
+            by the total number of points.
 
-            Unfortunately, the grades this model produces do not approximate the true distribution
-                of grades, as the graph below demonstrates.
+        Unfortunately, the grades this model produces do not approximate the true distribution
+            of grades, as the graph below demonstrates.
 
-        \subsection{Question-Independent, Binary Cheater, Random Cheat-Selection Model}
-            This model is equivalent to the one above, but uses point chunks representing each
-                question, which are assumed to be independent and take the sizes of each of the
-                questions. A certain number of questions rather than points are copied. Each question
-                is assigned a score based on a normal distribution from the mean and variance of
-                the real data for that question.
+    \subsection{Question-Independent, Binary Cheater, Random Cheat-Selection Model}
+        This model is equivalent to the one above, but uses point chunks representing each
+            question, which are assumed to be independent and take the sizes of each of the
+            questions. A certain number of questions rather than points are copied. Each question
+            is assigned a score based on a normal distribution from the mean and variance of
+            the real data for that question.
 
-            Unfortunately, this strategy also produces a distribution of grades dissimilar to the
-                original data.
+        Unfortunately, this strategy also produces a distribution of grades dissimilar to the
+            original data.
 
-            \begin{figure}[h!]
-                \centering
-                \includegraphics[width=\textwidth]{img/independents-not-working.png}
-            \end{figure}
-
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=\textwidth]{img/independents-not-working.png}
+        \end{figure}
 \end{document}
