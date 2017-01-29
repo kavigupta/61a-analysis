@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from analytics import compensate_for_grader_means, all_pairs
-from constants import DATA_DIR
+from constants import DATA_DIR, ALL_WAYS
 from evaluations import proc_evaluations
 from seating_chart import UNKNOWN, SeatingChart
 from statistics import permutation_test, Partition
@@ -29,11 +29,13 @@ def grader_comparison_report():
     by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
     permutation_test_of_pairs(lambda x: x.correlation, "Correlation", zero_meaned, seats,
                               TerminalProgressBar,
-                              path="report/img/permutation-test-correlation.png")
+                              path="report/img/permutation-test-correlation.png",
+                              adjacency_type=ALL_WAYS)
     permutation_test_of_pairs(lambda x: x.abs_score_diff, "Absolute Score Difference",
                               zero_meaned, seats,
                               TerminalProgressBar,
-                              path="report/img/permutation-test-abs-difference.png")
+                              path="report/img/permutation-test-abs-difference.png",
+                              adjacency_type=ALL_WAYS)
     model_grades_hist((ScoreIndependentModel, QuestionIndependentModel),
                       evals, seats, path="report/img/independents-not-working.png")
 
@@ -55,13 +57,14 @@ def model_grades_hist(models, evals, seats, path):
     plt.title("Model Scores Comparison")
     show_or_save(path, lgd)
 
-def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, path=None):
+def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, adjacency_type, path=None):
     """
     Runs a permutation test on the differences between means of the given statistic in the adjacent
         and non-adjacent pairs of students
     """
     non_time_adjacents = list(all_pairs(zero_meaned, seats, 2, progress,
-                                        require_same_room=True, require_not_time_adj=True))
+                                        require_same_room=True, require_not_time_adj=True,
+                                        adjacency_type=adjacency_type))
     plt.figure(figsize=(8, 3))
     report = permutation_test(
         partition=Partition.partition(non_time_adjacents, lambda x: x.are_space_adjacent),

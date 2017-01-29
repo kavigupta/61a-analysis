@@ -58,21 +58,21 @@ class ExamPair:
                      self.are_same_room))
 
 def all_pairs(graded_exam, seating_chart, time_delta, progress, require_same_room,
-              require_not_time_adj):
+              require_not_time_adj, adjacency_type):
     """
     Yields an iterable of all pairs between individuals.
     """
     if require_same_room:
         for _, in_room in seating_chart.emails_by_room:
             yield from _pairs_per_individual(graded_exam, seating_chart, time_delta, progress,
-                                             in_room, True, require_not_time_adj)
+                                             in_room, True, require_not_time_adj, adjacency_type)
     else:
         emails = list(graded_exam.emails)
         yield from _pairs_per_individual(graded_exam, seating_chart, time_delta, progress,
-                                         emails, False, require_not_time_adj)
+                                         emails, False, require_not_time_adj, adjacency_type)
 
 def _pairs_per_individual(graded_exam, seating_chart, time_delta, progress, emails, known_same_room,
-                          require_not_time_adj):
+                          require_not_time_adj, adjacency_type):
     p_bar = progress(len(emails))
     for index_x, email_x in enumerate(emails):
         p_bar.update(index_x)
@@ -94,7 +94,7 @@ def _pairs_per_individual(graded_exam, seating_chart, time_delta, progress, emai
             yield ExamPair(eval_x,
                            graded_exam.evaluation_for(email_y),
                            time_adjacent,
-                           seating_chart.are_adjacent(email_x, email_y),
+                           seating_chart.are_adjacent(email_x, email_y, adjacency_type),
                            same_room)
 
 

@@ -11,6 +11,8 @@ from statistics import p_value, PermutationReport
 from analytics import all_pairs, compensate_for_grader_means
 from graphics import NoProgressBar
 
+from constants import ALL_WAYS
+
 class Model(metaclass=ABCMeta):
     """
     Represents the abstract concept of a model, which has a parameter and a way to generate grades.
@@ -106,7 +108,8 @@ def score_diff_summary(grades, seats):
     """
     zero_meaned = compensate_for_grader_means(grades)
     non_time_adjacents = all_pairs(zero_meaned, seats, 2, NoProgressBar,
-                                   require_same_room=True, require_not_time_adj=True)
+                                   require_same_room=True, require_not_time_adj=True,
+                                   adjacency_type=ALL_WAYS)
     space_adj = []
     non_space_adj = []
     for pair in non_time_adjacents:

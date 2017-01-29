@@ -7,7 +7,7 @@ from unittest import TestCase, main
 from numpy.testing import assert_almost_equal as aae
 
 from seating_chart import SeatingChart, Location
-from constants import DATA_DIR
+from constants import DATA_DIR, ALL_WAYS
 from evaluations import proc_evaluations
 from analytics import compensate_for_grader_means, all_pairs, ExamPair, _unusualness
 from graded_exam import ExamQuestion
@@ -44,7 +44,7 @@ class TestAnalytics(TestCase):
         Tests the all_correlations method by exact checking on a small test case.
         """
         corrs = list(all_pairs(EVALS_SIMPLE_SAMPLE, SEATS_SIMPLE_SAMPLE, 1, NoProgressBar,
-                               False, False))
+                               False, False, ALL_WAYS))
         self.assertEqual(6, len(corrs))
         expect_cors = {
             ExamPair(EVALS_SIMPLE_SAMPLE.evaluation_for("%s@berkeley.edu" % first),
@@ -144,10 +144,10 @@ class TestSeatingChart(TestCase):
         """
         seats = SeatingChart('data/test-seats-complex.csv')
         self.assertEqual({"R@berkeley.edu", "T@berkeley.edu"},
-                         set(seats.adjacent_to("Q@berkeley.edu")))
+                         set(seats.adjacent_to("Q@berkeley.edu", ALL_WAYS)))
         self.assertEqual({"O@berkeley.edu", "T@berkeley.edu", "U@berkeley.edu"},
-                         set(seats.adjacent_to("Y@berkeley.edu")))
-        self.assertEqual(set(), set(seats.adjacent_to("A@berkeley.edu")),
+                         set(seats.adjacent_to("Y@berkeley.edu", ALL_WAYS)))
+        self.assertEqual(set(), set(seats.adjacent_to("A@berkeley.edu", ALL_WAYS)),
                          "Nothing adjacent to something in a different room")
     def test_column_normalization(self):
         """
@@ -155,11 +155,11 @@ class TestSeatingChart(TestCase):
         """
         seats = SeatingChart('data/test-seats-multiroom.csv')
         self.assertEqual({"Q@berkeley.edu", "T@berkeley.edu"},
-                         set(seats.adjacent_to("R@berkeley.edu")))
+                         set(seats.adjacent_to("R@berkeley.edu", ALL_WAYS)))
         self.assertEqual({"Y@berkeley.edu", "I@berkeley.edu", "W@berkeley.edu"},
-                         set(seats.adjacent_to("U@berkeley.edu")))
+                         set(seats.adjacent_to("U@berkeley.edu", ALL_WAYS)))
         self.assertEqual({"P@berkeley.edu", "W@berkeley.edu"},
-                         set(seats.adjacent_to("E@berkeley.edu")))
+                         set(seats.adjacent_to("E@berkeley.edu", ALL_WAYS)))
         # pylint: disable=W0212
         self.assertEqual(0.5, seats._location("W@berkeley.edu").column.location)
 

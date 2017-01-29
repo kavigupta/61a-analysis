@@ -14,6 +14,8 @@ from enum import Enum
 
 from numpy import argmin
 
+from constants import SIDEWAYS_ONLY
+
 class SeatingChart:
     """
     Represents a graph of student seating locations.
@@ -33,18 +35,26 @@ class SeatingChart:
         self.__adjacency_set = defaultdict(set)
         for email, result in self.__adjacency.items():
             self.__adjacency_set[email] = set(result.values())
+        self.__sideways_set = defaultdict(set)
+        for email, result in self.__adjacency.items():
+            for direction in result:
+                if direction.is_sideways:
+                    self.__sideways_set[email].add(result[direction])
+
     def __repr__(self):
         return "SeatingChart({!r})".format(self.__file_loc)
-    def adjacent_to(self, email):
+    def adjacent_to(self, email, adjacency_type):
         """
         Gets all people adjacent to the given person.
         """
-        return self.__adjacency_set[email]
-    def are_adjacent(self, first, second):
+        lookup = self.__sideways_set if adjacency_type == SIDEWAYS_ONLY else self.__adjacency_set
+        return lookup[email]
+    def are_adjacent(self, first, second, adjacency_type):
         """
         Checks whether FIRST and SECOND are adjacent.
         """
-        return first in self.adjacent_to(second) or second in self.adjacent_to(first)
+        return first in self.adjacent_to(second, adjacency_type) \
+                     or second in self.adjacent_to(first, adjacency_type)
     def same_room(self, first, second):
         """
         Returns whether FIRST and SECOND are in the same room.
