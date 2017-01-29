@@ -16,7 +16,7 @@ def permutation_test(partition, summary, number, progress):
     value = summary(partition.group_a, partition.group_b)
     distribution = [summary(a, b)
                     for a, b in _permute(partition.group_a, partition.group_b, number, progress)]
-    return PermutationReport(value, distribution, p_value(value, distribution))
+    return PermutationReport(value, distribution)
 
 def p_value(value, distribution):
     """
@@ -33,10 +33,9 @@ class PermutationReport:
     """
     Represents a report to be delivered about a permutation test.
     """
-    def __init__(self, value, distribution, p_val):
+    def __init__(self, value, distribution):
         self.__val = value
         self.__distr = distribution
-        self.__p = p_val
     def report(self, summary_name, title=None, path=None):
         """
         Perform the report.
@@ -49,7 +48,7 @@ class PermutationReport:
             title = title + ": "
         else:
             title = ""
-        plt.title("%sPermutation test: P-value=%.4f" % (title, self.__p))
+        plt.title("%sPermutation test: P-value=%.4f" % (title, self.p_value))
         plt.xlabel(summary_name)
         plt.ylabel("Frequency")
         lgd = plt.legend(bbox_to_anchor=(1.4, 1))
@@ -59,9 +58,9 @@ class PermutationReport:
         """
         Get the p-value for the difference in distributions.
         """
-        return self.__p
+        return p_value(self.__val, self.__distr)
     def __repr__(self):
-        return "PermutationReport({}, {}, {})".format(self.__val, self.__distr, self.__p)
+        return "PermutationReport({}, {}, {})".format(self.__val, self.__distr)
 
 class Partition:
     """
