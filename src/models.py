@@ -7,7 +7,7 @@ from math import floor
 import numpy as np
 from numpy.random import random, choice, normal, shuffle
 
-from statistics import p_value, PermutationReport
+from statistics import p_value, PermutationReport, TailType
 from analytics import all_pairs, compensate_for_grader_means
 from graphics import NoProgressBar
 
@@ -98,7 +98,7 @@ def model_on_params(true_grades, true_seats, true_value, model, params, summary,
     model_values = [summary(current_model.create_grades(true_seats),
                             true_seats)
                     for _ in range(n_trials)]
-    p_val = p_value(true_value, model_values)
+    p_val = p_value(true_value, model_values, TailType.UNKNOWN)
     return params, p_val, PermutationReport(true_value, model_values, p_val)
 
 def score_diff_summary(grades, seats):

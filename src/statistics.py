@@ -3,12 +3,27 @@ A module containing a variety of methods for statistical analyses.
 """
 
 from random import shuffle
+from enum import Enum
 
 from matplotlib import pyplot as plt
 import numpy as np
 from tools import show_or_save
 
-def permutation_test(partition, summary, number, progress):
+class TailType(Enum):
+    UNKNOWN = 1
+    KNOWN_HIGH = 2
+    KNOWN_LOW = 3
+    def p_value(self, greater, smaller, total):
+        greater += 1
+        smaller += 1
+        total += 1
+        return {
+            TailType.UNKNOWN : min(1, 2 * min(greater, smaller) / total),
+            TailType.KNOWN_HIGH : greater / total,
+            TailType.KNOWN_LOW : smaller / total
+        }[self]
+
+def permutation_test(partition, summary, number, progress, tail_type=TailType.UNKNOWN):
     """
     Checks whether the differences in the SUMMARY statistic over the two PARITIONs of the data are
         real or merely the result of random chance. Takes NUMBER samples.
@@ -16,9 +31,9 @@ def permutation_test(partition, summary, number, progress):
     value = summary(partition.group_a, partition.group_b)
     distribution = [summary(a, b)
                     for a, b in _permute(partition.group_a, partition.group_b, number, progress)]
-    return PermutationReport(value, distribution)
+    return PermutationReport(value, distribution, tail_type)
 
-def p_value(value, distribution):
+def p_value(value, distribution, tail_type):
     """
     Returns a p value of a given value against a given distribution. I.e., returns 2 times the
         size of the tail (with the given value included as if it were not already in the
@@ -26,16 +41,16 @@ def p_value(value, distribution):
     """
     n_greater = len([x for x in distribution if x >= value])
     n_smaller = len([x for x in distribution if x <= value])
-    p_val = (1 + min(n_greater, n_smaller)) * 2 / (1 + len(distribution))
-    return min(p_val, 1)
+    return tail_type.p_value(n_greater, n_smaller, len(distribution))
 
 class PermutationReport:
     """
     Represents a report to be delivered about a permutation test.
     """
-    def __init__(self, value, distribution):
+    def __init__(self, value, distribution, tail_type):
         self.__val = value
         self.__distr = distribution
+        self.__tail_type = tail_type
     def report(self, summary_name, title=None, path=None):
         """
         Perform the report.
@@ -58,9 +73,9 @@ class PermutationReport:
         """
         Get the p-value for the difference in distributions.
         """
-        return p_value(self.__val, self.__distr)
+        return p_value(self.__val, self.__distr, self.__tail_type)
     def __repr__(self):
-        return "PermutationReport({}, {}, {})".format(self.__val, self.__distr)
+        return "PermutationReport({}, {}, {})".format(self.__val, self.__distr, self.__tail_type)
 
 class Partition:
     """
