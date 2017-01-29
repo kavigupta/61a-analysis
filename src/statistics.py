@@ -10,10 +10,25 @@ import numpy as np
 from tools import show_or_save
 
 class TailType(Enum):
+    """
+    Represents a type of permutation test tail pattern.
+
+    UNKNOWN means we have no prior understanding of what direction the anomaly is in.
+
+    KNOWN_HIGH means we expect it to be higher, KNOWN_LOW means we expect it to be lower.
+    """
     UNKNOWN = 1
     KNOWN_HIGH = 2
     KNOWN_LOW = 3
     def p_value(self, greater, smaller, total):
+        """
+        Gets the p-value under the given model for a permutation test.
+
+        Input:
+            greater, the number of elements greater than or equal to the actual value
+            smaller, the number of elements smaller than or equal to the actual value
+            total, the total number of elements
+        """
         greater += 1
         smaller += 1
         total += 1
