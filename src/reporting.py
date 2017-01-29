@@ -57,7 +57,7 @@ def model_grades_hist(models, evals, seats, path):
     plt.title("Model Scores Comparison")
     show_or_save(path, lgd)
 
-def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, adjacency_type, path=None):
+def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, adjacency_type, path=None, number=100):
     """
     Runs a permutation test on the differences between means of the given statistic in the adjacent
         and non-adjacent pairs of students
@@ -71,10 +71,11 @@ def permutation_test_of_pairs(statistic, name, zero_meaned, seats, progress, adj
         summary=lambda x, y: np.mean(
             [statistic(u) for u in x]) - np.mean([statistic(u) for u in y]),
         progress=progress,
-        number=100)
+        number=number)
     report.report(
         summary_name="Difference in Mean %s Between Adjacent and Non-Adjacent Group" % name,
         title="N=%s" % (len(zero_meaned.emails)), path=path)
+    return report.p_value
 
 def create_grader_report(evals, exam_name, q_filter=lambda _: True, path=None, highlight=None):
     """
