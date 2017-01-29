@@ -49,6 +49,29 @@ class SeatingChart:
         """
         lookup = self.__sideways_set if adjacency_type == SIDEWAYS_ONLY else self.__adjacency_set
         return lookup[email]
+    def adjacency_layers(self, email, up_to, adjacency_type):
+        prev_layer = {email}
+        seen = {email}
+        for _ in range(up_to):
+            layer = {new_email
+                          for prev_email in prev_layer
+                          for new_email in self.adjacent_to(prev_email, adjacency_type)
+                          if new_email not in seen}
+            seen.update(layer)
+            yield layer
+            prev_layer = layer
+    def all_adjacencies(self, zero_meaned, up_to, adjacency_type):
+        adjacencies = [[] for _ in range(up_to)]
+        for email in zero_meaned.emails:
+            layers = self.adjacency_layers(email, up_to, adjacency_type)
+            evalu = zero_meaned.evaluation_for(email)
+            for adj, layer in zip(adjacencies, layers):
+                for other_email in layer:
+                    if other_email not in zero_meaned.emails:
+                        continue
+                    adj.append((evalu, zero_meaned.evaluation_for(other_email)))
+        return adjacencies
+
     def are_adjacent(self, first, second, adjacency_type):
         """
         Checks whether FIRST and SECOND are adjacent.
