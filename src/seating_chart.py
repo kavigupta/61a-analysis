@@ -64,7 +64,7 @@ class SeatingChart:
             seen.update(layer)
             yield layer
             prev_layer = layer
-    def all_adjacencies(self, zero_meaned, up_to, adjacency_type):
+    def all_adjacencies(self, zero_meaned, up_to, adjacency_type, gambler_fallacy_allowable_limit):
         """
         Gets a list from 0..up_to-1 of lists of pairs. The ith list contains pairs of emails of
             students with i students between them.
@@ -76,6 +76,8 @@ class SeatingChart:
             for adj, layer in zip(adjacencies, layers):
                 for other_email in layer:
                     if other_email not in zero_meaned.emails:
+                        continue
+                    if zero_meaned.time_diff(email, other_email) <= gambler_fallacy_allowable_limit:
                         continue
                     adj.append((evalu, zero_meaned.evaluation_for(other_email)))
         return adjacencies
