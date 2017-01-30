@@ -7,7 +7,7 @@ from unittest import TestCase, main
 from numpy.testing import assert_almost_equal as aae
 
 from seating_chart import SeatingChart, Location
-from constants import DATA_DIR, ALL_WAYS
+from constants import DATA_DIR, ALL_WAYS, SIDEWAYS_ONLY
 from evaluations import proc_evaluations
 from analytics import compensate_for_grader_means, all_pairs, ExamPair, _unusualness
 from graded_exam import ExamQuestion
@@ -162,6 +162,13 @@ class TestSeatingChart(TestCase):
                          set(seats.adjacent_to("E@berkeley.edu", ALL_WAYS)))
         # pylint: disable=W0212
         self.assertEqual(0.5, seats._location("W@berkeley.edu").column.location)
+    def test_adjacency_layers(self):
+        """
+        Ensures that the adjacency layers function is working correctly.
+        """
+        seats = SeatingChart('data/test-seats-complex.csv')
+        self.assertEqual([{'Q@berkeley.edu', 'E@berkeley.edu'}, set(), set()],
+            list(seats.adjacency_layers('T@berkeley.edu', 3, SIDEWAYS_ONLY)))
 
 class TestLocation(TestCase):
     """
