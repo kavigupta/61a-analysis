@@ -11,3 +11,4 @@ DATA_DIR = expanduser("~/data")
 
 SIDEWAYS_ONLY = True
 ALL_WAYS = False
+FORWARD_BACKWARD = "FileNotFound"

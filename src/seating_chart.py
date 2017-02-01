@@ -14,7 +14,7 @@ from enum import Enum
 
 from numpy import argmin
 
-from constants import SIDEWAYS_ONLY
+from constants import SIDEWAYS_ONLY, FORWARD_BACKWARD, ALL_WAYS
 
 class SeatingChart:
     """
@@ -36,10 +36,13 @@ class SeatingChart:
         for email, result in self.__adjacency.items():
             self.__adjacency_set[email] = set(result.values())
         self.__sideways_set = defaultdict(set)
+        self.__frontback_set = defaultdict(set)
         for email, result in self.__adjacency.items():
             for direction in result:
                 if direction.is_sideways:
                     self.__sideways_set[email].add(result[direction])
+                else:
+                    self.__frontback_set[email].add(result[direction])
 
     def __repr__(self):
         return "SeatingChart({!r})".format(self.__file_loc)
@@ -47,8 +50,11 @@ class SeatingChart:
         """
         Gets all people adjacent to the given person.
         """
-        lookup = self.__sideways_set if adjacency_type == SIDEWAYS_ONLY else self.__adjacency_set
-        return lookup[email]
+        return {
+                SIDEWAYS_ONLY : self.__sideways_set,
+                FORWARD_BACKWARD : self.__frontback_set,
+                ALL_WAYS : self.__adjacency_set
+            }[adjacency_type][email]
     def adjacency_layers(self, email, up_to, adjacency_type):
         """
         Gets a list from 0..up_to-1 of sets. The ith list contains every email i away from the
