@@ -14,8 +14,6 @@ from enum import Enum
 
 from numpy import argmin
 
-from constants import SIDEWAYS_ONLY, FORWARD_BACKWARD, ALL_WAYS
-
 class SeatingChart:
     """
     Represents a graph of student seating locations.
@@ -51,10 +49,10 @@ class SeatingChart:
         Gets all people adjacent to the given person.
         """
         return {
-                SIDEWAYS_ONLY : self.__sideways_set,
-                FORWARD_BACKWARD : self.__frontback_set,
-                ALL_WAYS : self.__adjacency_set
-            }[adjacency_type][email]
+            AdjacencyType.sideways_only : self.__sideways_set,
+            AdjacencyType.forward_backward : self.__frontback_set,
+            AdjacencyType.all_ways : self.__adjacency_set
+        }[adjacency_type][email]
     def adjacency_layers(self, email, up_to, adjacency_type):
         """
         Gets a list from 0..up_to-1 of sets. The ith list contains every email i away from the
@@ -138,6 +136,16 @@ class SeatingChart:
         return self._location(email).y_region
     def _location(self, email):
         return self.__seating_chart[email]
+
+class AdjacencyType(Enum):
+    """
+    Represents an adjacency type, or a way in which things can be adjacent in a seating chart
+    """
+    sideways_only = "-"
+    forward_backward = "|"
+    all_ways = "+"
+    def __str__(self):
+        return self.value
 
 class Column:
     """

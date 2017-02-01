@@ -7,9 +7,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from analytics import compensate_for_grader_means, all_pairs
-from constants import DATA_DIR, ALL_WAYS
+from constants import DATA_DIR
 from evaluations import proc_evaluations
-from seating_chart import UNKNOWN, SeatingChart
+from seating_chart import UNKNOWN, SeatingChart, AdjacencyType
 from statistics import permutation_test, Partition
 from tools import TempParams
 from tools import show_or_save
@@ -30,12 +30,12 @@ def grader_comparison_report():
     permutation_test_of_pairs(lambda x: x.correlation, "Correlation", zero_meaned, seats,
                               TerminalProgressBar,
                               path="report/img/permutation-test-correlation.png",
-                              adjacency_type=ALL_WAYS)
+                              adjacency_type=AdjacencyType.all_ways)
     permutation_test_of_pairs(lambda x: x.abs_score_diff, "Absolute Score Difference",
                               zero_meaned, seats,
                               TerminalProgressBar,
                               path="report/img/permutation-test-abs-difference.png",
-                              adjacency_type=ALL_WAYS)
+                              adjacency_type=AdjacencyType.all_ways)
     model_grades_hist((ScoreIndependentModel, QuestionIndependentModel),
                       evals, seats, path="report/img/independents-not-working.png")
 

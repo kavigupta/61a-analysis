@@ -11,7 +11,7 @@ from statistics import p_value, PermutationReport, TailType
 from analytics import all_pairs, compensate_for_grader_means
 from graphics import NoProgressBar
 
-from constants import ALL_WAYS
+from seating_chart import AdjacencyType
 
 class Model(metaclass=ABCMeta):
     """
@@ -109,7 +109,7 @@ def score_diff_summary(grades, seats):
     zero_meaned = compensate_for_grader_means(grades)
     non_time_adjacents = all_pairs(zero_meaned, seats, 2, NoProgressBar,
                                    require_same_room=True, require_not_time_adj=True,
-                                   adjacency_type=ALL_WAYS)
+                                   adjacency_type=AdjacencyType.all_ways)
     space_adj = []
     non_space_adj = []
     for pair in non_time_adjacents:
