@@ -168,7 +168,8 @@ class TestSeatingChart(TestCase):
         """
         seats = SeatingChart('data/test-seats-complex.csv')
         self.assertEqual([{'Q@berkeley.edu', 'E@berkeley.edu'}, set(), set()],
-            list(seats.adjacency_layers('T@berkeley.edu', 3, AdjacencyType.sideways_only)))
+                         list(seats.adjacency_layers('T@berkeley.edu', 3,
+                                                     AdjacencyType.sideways_only)))
 
 class TestLocation(TestCase):
     """

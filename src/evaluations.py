@@ -189,4 +189,3 @@ def proc_evaluations(evaluations):
         merged[identity] = Evaluation(name, email, *[x[key] for _, x in evals])
     system('rm -r {}'.format(extracted))
     return ExamGrades.create(problems, merged)
-
