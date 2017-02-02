@@ -7,6 +7,7 @@ from enum import Enum
 
 from matplotlib import pyplot as plt
 import numpy as np
+from numpy.random import choice
 from tools import show_or_save
 
 class TailType(Enum):
@@ -115,3 +116,37 @@ def _permute(sample_a, sample_b, number, progress):
         p_bar.update(index)
         shuffle(combined)
         yield combined[:len(sample_a)], combined[len(sample_a):]
+
+class Bootstrap:
+    """
+    Represents a bootstrap, a way to estimate a confidence interval of the mean.
+
+    Inputs:
+        data:       the set to get the mean and confidence interval from
+        n_trials:   the number of times to repeat the sampling with replacement
+        ci_amt:     the size of the confidence interval to calculate.
+    """
+    def __init__(self, data, n_trials, ci_amt):
+        distribution = list(Bootstrap._n_means(data, n_trials))
+        self.mean = np.mean(distribution)
+        self.ci_top = np.percentile(distribution, (100 + ci_amt) / 2)
+        self.ci_bot = np.percentile(distribution, (100 - ci_amt) / 2)
+    @staticmethod
+    def _n_means(data, n_trials):
+        for _ in range(n_trials):
+            yield np.mean(choice(data, len(data), replace=True))
+    @staticmethod
+    def plot_errorbars(bootstraps, xvals=None, **kwargs):
+        """
+        Plots the given set of bootstraps as a set of error bars.
+
+        bootstraps: a list of Bootstrap objects
+        xvals:      the x values to use, or range(len(bootstraps)) if none is provided
+        kwargs:     additional arguments, to pass onto errobar
+        """
+        if xvals is None:
+            xvals = np.arange(len(bootstraps))
+        plt.errorbar(xvals, [x.mean for x in bootstraps],
+                     yerr=[[x.mean-x.ci_bot for x in bootstraps],
+                           [x.ci_top - x.mean for x in bootstraps]],
+                     **kwargs)
