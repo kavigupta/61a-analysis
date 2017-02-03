@@ -47,25 +47,12 @@
         The Gambler's Fallacy could possibly lead to a negative correlation between consecutively graded
             exams. To control for this, we simply ignore pairs of exams that are graded near each other in
             time.
-    \subsection{Room}
+    \subsection{Regional Differences}
         Individual rooms might have different rubric profiles, due to, for example, different TAs in
-            different rooms. It looks like no particular room has that much of a problem, so for now
-            rooms are not controlled for except to not take pairs from different rooms (there is a
-            small amount of variation).
-        \begin{figure}[h!]
-            \centering
-            \includegraphics[width=\textwidth]{img/room-comparison.png}
-        \end{figure}
-    \subsection{Front of Room / Back of Room}
-        Sections within rooms appear to have little effect on exam profiles (at least within the
-            margin of error), and definitely nothing systematic.
-        \begin{figure}[h!]
-            \centering
-            \includegraphics[width=\textwidth]{img/region-comparison.png}
-        \end{figure}
-    \subsection{Aisle / Middle}
-        No analysis on this factor as of yet. Trying to find aisle locations is impossible from
-            seating chart data; would require some data gathering.
+            different rooms. Additionally, individual rows or locations within rows might have
+            different profiles themselves. To compensate for this, we compare the similarities of
+            students sitting next to each other with the similarities of students sitting 2 seats
+            away from each other.
     \subsection{Seating Chart Inaccuracies}
         Not yet fixed. Have the data, but would require a lot of data input because OCR is not particularly
             effective at recognizing handwriting.
