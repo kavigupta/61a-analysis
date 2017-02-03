@@ -12,7 +12,7 @@ from collections import defaultdict
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 
-from numpy import argmin
+from numpy import argmin, mean
 
 class SeatingChart:
     """
@@ -68,6 +68,19 @@ class SeatingChart:
             seen.update(layer)
             yield layer
             prev_layer = layer
+    def similarity_layers(self, email, up_to, adjacency_type, evals, similarity_fn,
+                          gambler_fallacy_allowable_limit):
+        """
+        Gets all layers from 0..up_to-1 of numbers. The ith element contains the average similarity
+            between email and all the values with i students between them.
+        """
+        for layer in self.adjacency_layers(email, up_to, adjacency_type):
+            yield mean([similarity_fn(evals.evaluation_for(email),
+                                      evals.evaluation_for(other_email))
+                        for other_email in layer
+                        if other_email in evals.emails
+                        and evals.time_diff(email, other_email) <= gambler_fallacy_allowable_limit])
+
     def all_adjacencies(self, zero_meaned, up_to, adjacency_type, gambler_fallacy_allowable_limit):
         """
         Gets a list from 0..up_to-1 of lists of pairs. The ith list contains pairs of emails of
