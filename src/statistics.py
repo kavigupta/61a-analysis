@@ -127,10 +127,24 @@ class Bootstrap:
         ci_amt:     the size of the confidence interval to calculate.
     """
     def __init__(self, data, n_trials, ci_amt):
-        distribution = list(Bootstrap._n_means(data, n_trials))
-        self.mean = np.mean(distribution)
-        self.ci_top = np.percentile(distribution, (100 + ci_amt) / 2)
-        self.ci_bot = np.percentile(distribution, (100 - ci_amt) / 2)
+        self.data = data
+        self.distribution = list(Bootstrap._n_means(data, n_trials))
+        self.mean = np.mean(self.distribution)
+        self.ci_top = np.percentile(self.distribution, (100 + ci_amt) / 2)
+        self.ci_bot = np.percentile(self.distribution, (100 - ci_amt) / 2)
+    def plot_data(self):
+        """
+        Plots the data, along with a 95% CI of the mean.
+        """
+        self._plot_ci(self.data)
+    def plot_mean(self):
+        """
+        Plots the mean, along with a 95% CI.
+        """
+        self._plot_ci(self.distribution)
+    def _plot_ci(self, dataset):
+        plt.hist(dataset)
+        plt.axvspan(self.ci_bot, self.ci_top, alpha=0.5, color="green")
     @staticmethod
     def _n_means(data, n_trials):
         for _ in range(n_trials):
