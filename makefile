@@ -9,6 +9,7 @@ report_pdf: report_images
 	cd ..
 
 report_images:
+	mkdir report/img
 	python3 src/reporting.py
 	touch report_images
 
