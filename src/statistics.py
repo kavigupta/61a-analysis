@@ -126,12 +126,17 @@ class Bootstrap:
         n_trials:   the number of times to repeat the sampling with replacement
         ci_amt:     the size of the confidence interval to calculate.
     """
-    def __init__(self, data, n_trials, ci_amt):
+    def __init__(self, data, n_trials, ci_amt=None, ci_above=None, ci_below=None):
+        if ci_amt is not None:
+            ci_above = (100 + ci_amt) / 2
+            ci_below = (100 - ci_amt) / 2
+        if ci_above is None or ci_below is None:
+            raise RuntimeError("Invaild arguments")
         self.data = data
         self.distribution = list(Bootstrap._n_means(data, n_trials))
         self.mean = np.mean(self.distribution)
-        self.ci_top = np.percentile(self.distribution, (100 + ci_amt) / 2)
-        self.ci_bot = np.percentile(self.distribution, (100 - ci_amt) / 2)
+        self.ci_top = np.percentile(self.distribution, ci_above)
+        self.ci_bot = np.percentile(self.distribution, ci_below)
     def plot_data(self):
         """
         Plots the data, along with a 95% CI of the mean.
@@ -193,4 +198,4 @@ def matched_differences_bootstrap(exams, seating_charts, adjacency_type,
                 if np.isnan(diff):
                     continue
                 matched_diff.append(diff)
-            yield (exam, gfal), Bootstrap(matched_diff, bootstrap_count, 95)
+            yield (exam, gfal), Bootstrap(matched_diff, bootstrap_count, ci_above=100, ci_below=5)
