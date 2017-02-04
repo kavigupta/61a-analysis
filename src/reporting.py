@@ -3,6 +3,8 @@ A module containing a variety of methods for reporting
 """
 from math import sqrt
 
+from collections import OrderedDict
+
 from matplotlib import pyplot as plt
 import numpy as np
 
@@ -10,34 +12,45 @@ from analytics import compensate_for_grader_means, all_pairs
 from constants import DATA_DIR
 from evaluations import proc_evaluations
 from seating_chart import UNKNOWN, SeatingChart, AdjacencyType
-from statistics import permutation_test, Partition
+from statistics import permutation_test, Partition, Bootstrap, matched_differences_bootstrap
 from tools import TempParams
 from tools import show_or_save
-from graphics import TerminalProgressBar
 from models import ScoreIndependentModel, QuestionIndependentModel
+
+def load_all():
+    """
+    Return evaluations, seats, and zero_meaned evaluations from each of the results.
+    """
+    evals = OrderedDict()
+    seats = OrderedDict()
+    zero_meaneds = OrderedDict()
+    for exam in "mt1", "mt2", "final":
+        evals[exam] = proc_evaluations('%s/real-data/%s_evaluations.zip' % (DATA_DIR, exam))
+        seats[exam] = SeatingChart('%s/real-data/%s_seats.csv' % (DATA_DIR, exam))
+        zero_meaneds[exam] = compensate_for_grader_means(evals[exam])
+    return evals, seats, zero_meaneds
 
 def grader_comparison_report():
     """
     Generates all the images necessary for the grader comparison report.
     """
-    evals = proc_evaluations('%s/real-data/Midterm_1_evaluations.zip' % DATA_DIR)
-    seats = SeatingChart('%s/real-data/mt1_seats.csv' % DATA_DIR)
-    zero_meaned = compensate_for_grader_means(evals)
-    create_grader_report(evals, "Midterm 1", q_filter=lambda x: x == 1.3,
+    evals, seats, zero_meaneds = load_all()
+    create_grader_report(evals["mt1"], "Midterm 1", q_filter=lambda x: x == 1.3,
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
-    by_room_chart(evals, seats, "Midterm 1", path="report/img/room-comparison.png")
-    by_region_chart(evals, seats, "Midterm 1", path="report/img/region-comparison.png")
-    permutation_test_of_pairs(lambda x: x.correlation, "Correlation", zero_meaned, seats,
-                              TerminalProgressBar,
-                              path="report/img/permutation-test-correlation.png",
-                              adjacency_type=AdjacencyType.all_ways)
-    permutation_test_of_pairs(lambda x: x.abs_score_diff, "Absolute Score Difference",
-                              zero_meaned, seats,
-                              TerminalProgressBar,
-                              path="report/img/permutation-test-abs-difference.png",
-                              adjacency_type=AdjacencyType.all_ways)
+    by_room_chart(evals["mt1"], seats["mt1"], "Midterm 1", path="report/img/room-comparison.png")
+    by_region_chart(evals["mt1"], seats["mt1"], "Midterm 1",
+                    path="report/img/region-comparison.png")
+    plt.figure(figsize=(10, 5))
+    matched_difference_graph(zero_meaneds, seats, list(range(3)),
+                             lambda x, y: x.correlation(y), "rubric-item-level correlation",
+                             path="report/img/matched-diff-rubric-correlation.png")
+    plt.figure(figsize=(10, 5))
+    matched_difference_graph(zero_meaneds, seats, list(range(3)),
+                             lambda x, y: -abs(x.score - y.score),
+                             "negative absolute score difference",
+                             path="report/img/matched-diff-negative-abs-score-diff.png")
     model_grades_hist((ScoreIndependentModel, QuestionIndependentModel),
-                      evals, seats, path="report/img/independents-not-working.png")
+                      evals["mt1"], seats["mt2"], path="report/img/independents-not-working.png")
 
 def model_grades_hist(models, evals, seats, path):
     """
@@ -180,6 +193,34 @@ def by_room_chart(evals, seats, exam_name, path=None):
             average.append([x for x in for_room.exam_profile(email)])
         categories.append((room, average))
     draw_exam_profiles(categories, exam_name, "Room", path)
+
+def matched_difference_graph(exams, seats, gamblers_fallacy_corrections,
+                             similarity_fn, similarity_name, bootstrap_count=10000,
+                             path=None):
+    """
+    Draws a comparison graph of matched similarity differences between different exams and gambler's
+        fallacy corrections.
+    """
+    names, matched_boots = zip(*matched_differences_bootstrap(exams, seats,
+                                                              AdjacencyType.sideways_only,
+                                                              gamblers_fallacy_corrections,
+                                                              similarity_fn, bootstrap_count))
+    xvals = list(range(len(names)))
+    Bootstrap.plot_errorbars(matched_boots, fmt="*", capsize=10, color="black")
+    if len(gamblers_fallacy_corrections) > 1:
+        plt.xticks(xvals, [name[1] for name in names])
+        plt.xlabel("Number of exams required between a pair of exams to "\
+                    "allow a comparison (Gambler's Fallacy Correction)")
+    plt.axhline(0, color="black")
+    colors = dict(zip(exams, ("red", "blue", "green")))
+    for name in exams:
+        items = [i for i in range(len(names)) if names[i][0] == name]
+        plt.axvspan(min(items) - 0.5, max(items) + 0.5, color=colors[name], alpha=0.3, label=name)
+    plt.ylabel("One-sided 95% confidence interval of mean difference")
+    plt.title("Difference in matched %s between one- and two-apart students"
+              % similarity_name)
+    lgd = plt.legend()
+    show_or_save(path, lgd)
 
 if __name__ == '__main__':
     grader_comparison_report()
