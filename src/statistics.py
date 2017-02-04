@@ -164,3 +164,33 @@ class Bootstrap:
                      yerr=[[x.mean-x.ci_bot for x in bootstraps],
                            [x.ci_top - x.mean for x in bootstraps]],
                      **kwargs)
+
+def matched_differences_bootstrap(exams, seating_charts, adjacency_type,
+                                  gambler_limits, similarity_fn, bootstrap_count):
+    """
+    Generates a list of bootstraps for matched differences.
+
+    exams: a dictionary from exam name -> graded exam
+    seating_charts: a dictionary from exam name -> seating chart
+    adjacency_type: the type of adjacency to use
+    gambler_limits: a list of gambler's fallacy allowable limits to try
+    similarity_fn: a function (evaluation, evaluation) -> R representing similarity
+    bootstrap_count: the number of bootstrap iterations to perform
+
+    Output: an iterable ((exam name, gambler fallacy limit), bootstrap of matched differences)
+    """
+    for exam in exams:
+        for gfal in gambler_limits:
+            matched_diff = []
+            chart = seating_charts[exam]
+            for email in exams[exam].emails:
+                one_apart, two_apart \
+                    = chart.similarity_layers(email, 2, adjacency_type,
+                                              exams[exam],
+                                              similarity_fn,
+                                              gambler_fallacy_allowable_limit=gfal)
+                diff = one_apart - two_apart
+                if np.isnan(diff):
+                    continue
+                matched_diff.append(diff)
+            yield (exam, gfal), Bootstrap(matched_diff, bootstrap_count, 95)
