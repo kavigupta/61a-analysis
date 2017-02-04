@@ -75,11 +75,15 @@ class SeatingChart:
             between email and all the values with i students between them.
         """
         for layer in self.adjacency_layers(email, up_to, adjacency_type):
-            yield mean([similarity_fn(evals.evaluation_for(email),
-                                      evals.evaluation_for(other_email))
-                        for other_email in layer
-                        if other_email in evals.emails
-                        and evals.time_diff(email, other_email) <= gambler_fallacy_allowable_limit])
+            values = [similarity_fn(evals.evaluation_for(email),
+                                    evals.evaluation_for(other_email))
+                      for other_email in layer
+                      if other_email in evals.emails
+                      and evals.time_diff(email, other_email) <= gambler_fallacy_allowable_limit]
+            if values == []:
+                yield float('nan')
+            else:
+                yield mean(values)
 
     def all_adjacencies(self, zero_meaned, up_to, adjacency_type, gambler_fallacy_allowable_limit):
         """
