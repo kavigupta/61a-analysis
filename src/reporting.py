@@ -24,17 +24,20 @@ def load_all():
     evals = OrderedDict()
     seats = OrderedDict()
     zero_meaneds = OrderedDict()
+    zero_meaned_no_correction = OrderedDict()
     for exam in "mt1", "mt2", "final":
         evals[exam] = proc_evaluations('%s/real-data/%s_evaluations.zip' % (DATA_DIR, exam))
         seats[exam] = SeatingChart('%s/real-data/%s_seats.csv' % (DATA_DIR, exam))
         zero_meaneds[exam] = compensate_for_grader_means(evals[exam])
-    return evals, seats, zero_meaneds
+        zero_meaned_no_correction[exam] = compensate_for_grader_means(evals[exam],
+                                                                      z_thresh=float('inf'))
+    return evals, seats, zero_meaneds, zero_meaned_no_correction
 
 def grader_comparison_report():
     """
     Generates all the images necessary for the grader comparison report.
     """
-    evals, seats, zero_meaneds = load_all()
+    evals, seats, zero_meaneds, zero_meaned_no_correction = load_all()
     create_grader_report(evals["mt1"], "Midterm 1", q_filter=lambda x: x == 1.3,
                          path="report/img/grader-comparison.png", highlight={5 : "blue", 8 : "red"})
     by_room_chart(evals["mt1"], seats["mt1"], "Midterm 1", path="report/img/room-comparison.png")
@@ -45,7 +48,7 @@ def grader_comparison_report():
                              lambda x, y: x.correlation(y), "rubric-item-level correlation",
                              path="report/img/matched-diff-rubric-correlation.png")
     plt.figure(figsize=(10, 5))
-    matched_difference_graph(zero_meaneds, seats, list(range(3)),
+    matched_difference_graph(zero_meaned_no_correction, seats, list(range(3)),
                              lambda x, y: -abs(x.score - y.score),
                              "negative absolute score difference",
                              path="report/img/matched-diff-negative-abs-score-diff.png")
