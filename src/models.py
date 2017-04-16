@@ -187,7 +187,7 @@ class RandomSeatingModel(Model):
     @staticmethod
     def name():
         return "Random Seating Model"
-def binary_cheater(base_model_type, params):
+def binary_cheater(base_model_type, params, adjacency_type):
     """
     Takes a baseline PointEvaluation-generating model and makes some of the people cheaters.
 
@@ -215,7 +215,7 @@ def binary_cheater(base_model_type, params):
             for cheat in cheaters:
                 if cheat not in grades:
                     continue
-                marks = list(x for x in seats.adjacent_to(cheat) if x in grades)
+                marks = list(x for x in seats.adjacent_to(cheat, adjacency_type) if x in grades)
                 if len(marks) == 0:
                     continue
                 mark = choice(marks)

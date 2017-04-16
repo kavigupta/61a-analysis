@@ -29,7 +29,7 @@ except ValueError:
 EVALS = proc_evaluations('%s/real-data/Midterm_1_evaluations.zip' % DATA_DIR)
 SEATS = SeatingChart('%s/real-data/mt1_seats.csv' % DATA_DIR)
 
-MODEL = binary_cheater(RandomSeatingModel, ())
+MODEL = binary_cheater(RandomSeatingModel, (), AdjacencyType.sideways_only)
 
 TRUE_VALUE = score_diff_summary(EVALS, SEATS)
 
