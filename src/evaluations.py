@@ -37,9 +37,15 @@ class Evaluation:
         Get the total score on the exam; i.e., the score the student receives for the exam.
         """
         return sum(e.total_score for e in self.evals)
+    @property
+    def rubrics(self):
+        """
+        Return a list of all rubric items in this evaluation
+        """
+        return [y for x in self.evals for y in x.rubric_items]
     @cached_property
     def __norm_vec(self):
-        all_rubrics = np.array([y for x in self.evals for y in x.rubric_items])
+        all_rubrics = np.array(self.rubrics)
         return all_rubrics / np.linalg.norm(all_rubrics)
     def correlation(self, other):
         """
