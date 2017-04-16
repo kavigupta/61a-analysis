@@ -52,6 +52,11 @@ def grader_comparison_report():
                              lambda x, y: -abs(x.score - y.score),
                              "negative absolute score difference",
                              path="report/img/matched-diff-negative-abs-score-diff.png")
+    plt.figure(figsize=(10, 5))
+    matched_difference_graph(zero_meaned_no_correction, seats, list(range(3)),
+                             lambda x, y: x.question_correlation(y),
+                             "question-level correlation",
+                             path="report/img/matched-diff-question-correlation.png")
     model_grades_hist((ScoreIndependentModel, QuestionIndependentModel),
                       evals["mt1"], seats["mt2"], path="report/img/independents-not-working.png")
 

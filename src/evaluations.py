@@ -46,6 +46,12 @@ class Evaluation:
         Find the correlation of this and another evaluation
         """
         return np.sum(self.__norm_vec * other.__norm_vec) # pylint: disable=W0212
+    @cached_property
+    def __question_norm_vec(self):
+        all_rubrics = np.array([y.total_score for y in self.evals])
+        return all_rubrics / np.linalg.norm(all_rubrics)
+    def question_correlation(self, other):
+        return np.sum(self.__question_norm_vec * other.__question_norm_vec) # pylint: disable=W0212
 
 class QuestionScore:
     """

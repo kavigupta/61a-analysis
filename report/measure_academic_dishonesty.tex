@@ -43,6 +43,10 @@
                 $$u = \sum_k \left|\frac{x_k - \mu_k}{\sigma_k}\right|$$ where $x_k$ is the mean for the
                 given grader of the $k$th rubric item, and $\mu_k, \sigma_k$ are the mean and standard
                 deviation for that rubric item in general}.
+
+        If we do not use individual rubric items, but instead overall question scores, we can use
+            more similar formulas but discard less data as graders' question scores are more similar
+            to each other.
     \subsection{Sequencing}
         The Gambler's Fallacy could possibly lead to a negative correlation between consecutively graded
             exams. To control for this, we simply ignore pairs of exams that are graded near each other in
@@ -69,15 +73,22 @@
         \end{figure}
     \subsection{Absolute Difference in Overall Exam Score}
         An alternate means of similarity is far simpler. We look at the average difference
-            between the scores in the two exams. It turns out that despite its unsophistication,
-            this test is also able to see past the noise in the data.
+            between the scores in the two exams. For this measure of similarity, we do not need to
+            remove extreme graders.
+
+        Unfortunately, this does not seem to be granular enough to find cheaters.
         \begin{figure}[h!]
             \centering
-            \includegraphics[width=\textwidth]{img/permutation-test-abs-difference.png}
+            \includegraphics[width=\textwidth]{img/matched-diff-negative-abs-score-diff.png}
         \end{figure}
-
-        In this case, the difference is the opposite as above, because a higher correlation
-            corresponds to a smaller absolute difference.
+    \subsection{Question Level Correlation}
+        A compromise between the power of the rubric-item level correlation and the simplicity of
+            the absolute difference in exam score is question-level correlation. Unfortunately, it
+            still lacks the power to see beyond the noise.
+        \begin{figure}[h!]
+            \centering
+            \includegraphics[width=\textwidth]{img/matched-diff-question-correlation.png}
+        \end{figure}
 \section{Model For Academic Dishonesty}
     \subsection{Score-Independent, Binary Cheater, Random Cheat-Selection, Model}
         Assume that some fixed fraction $c$ of the students cheat by copying exactly $k$
