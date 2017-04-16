@@ -14,8 +14,7 @@ def usage():
     """
     Print out a usage statement
     """
-    print("Usage: script.py GRANULARITY N_TRIALS N_THREADS")
-    raise RuntimeError
+    raise RuntimeError("Usage: script.py GRANULARITY N_TRIALS N_THREADS")
 
 if len(argv) != 4:
     usage()
