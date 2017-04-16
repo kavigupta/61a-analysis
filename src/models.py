@@ -119,6 +119,17 @@ def score_diff_summary(grades, seats):
             non_space_adj.append(pair.abs_score_diff)
     return np.mean(space_adj) - np.mean(non_space_adj)
 
+def one_way_vs_two_way_summary(grades, seats, gambler_fallacy_allowable_limit, similarity_fn):
+    diffs = []
+    for email in grades.emails:
+        one_apart, two_apart = seats.similarity_layers(email, 2, AdjacencyType.sideways_only,
+                                                       grades,
+                                                       similarity_fn,
+                                                       gambler_fallacy_allowable_limit=gambler_fallacy_allowable_limit)
+        if not np.isnan(one_apart-two_apart):
+            diffs.append(one_apart - two_apart)
+    return np.mean(diffs)
+
 class PointEvaluation:
     """
     Represents a Mock Evaluation with each point being an independent item
