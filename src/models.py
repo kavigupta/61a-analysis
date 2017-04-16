@@ -134,6 +134,18 @@ class PointEvaluation:
             the points.
         """
         self.score = sum(self.points)
+    @property
+    def rubrics(self):
+        """
+        Produce a list of rubric items for this evaluation (an alias for self.points)
+        """
+        return self.points
+    def correlation(self, other):
+        """
+        Calculate r(self.rubrics, other.rubrics)
+        """
+        first, second = np.array(self.rubrics), np.array(other.rubrics)
+        return sum(first * second / (np.linalg.norm(first) * np.linalg.norm(second)))
 
 class ScoreIndependentModel(Model):
     """
@@ -180,7 +192,7 @@ class RandomSeatingModel(Model):
         evals = [self._environment.evaluation_for(email) for email in self._environment.emails]
         shuffle(evals)
         for evalu, email in zip(evals, self._environment.emails):
-            yield email, PointEvaluation([x.total_score for x in evalu.evals])
+            yield email, PointEvaluation(evalu.rubrics)
     @staticmethod
     def parameters(_):
         return [()]
