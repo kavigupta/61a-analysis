@@ -61,15 +61,16 @@
         Not yet fixed. Have the data, but would require a lot of data input because OCR is not particularly
             effective at recognizing handwriting.
 \section{Measuring Similarity}
-    \subsection{Correlation}
+    \subsection{Rubric-Item Level Correlation}
         Using correlation between normalized scores as a measure of similarity, we can prove that
             there is a difference between the similarities in the set of adjacent pairs of students
-            and the set of non-adjacent pairs of students (see controls above for more details).
+            and the set of non-adjacent pairs of students for Midterm 1 and the final, but not for
+            Midterm 2 (see controls above for more details). We can also see that the gambler's
+            fallacy correction does not significantly impact it.
 
-        Overall, a permutation test shows that the difference is in fact significant:
         \begin{figure}[h!]
             \centering
-            \includegraphics[width=\textwidth]{img/permutation-test-correlation.png}
+            \includegraphics[width=\textwidth]{img/matched-diff-rubric-correlation.png}
         \end{figure}
     \subsection{Absolute Difference in Overall Exam Score}
         An alternate means of similarity is far simpler. We look at the average difference
