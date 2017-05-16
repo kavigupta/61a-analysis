@@ -12,3 +12,4 @@ report_images
 *.log
 *.fls
 *.fdb_latexmk
+pylint_log*

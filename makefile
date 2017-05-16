@@ -13,8 +13,8 @@ report_images:
 	python3 src/reporting.py
 	touch report_images
 
-pylint:
-	pylint src/*.py | grep -v I:  > log
+pylint_log: src/*.py
+	pylint src/*.py | grep -v I:  > pylint_log
 
 tests:
 	python src/tests.py
