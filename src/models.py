@@ -252,14 +252,13 @@ def binary_cheater(base_model_type, params, adjacency_type):
             return grades.items()
         @staticmethod
         def parameters(granularity):
-            yield 0, 0
             granularity -= 1
             if granularity == 0:
                 return
             n_pc = floor(granularity ** (2/3))
             n_k = granularity // n_pc
-            for percent_cheaters in np.linspace(0, 1, n_pc + 1)[1:]:
-                for percent_cheating in np.linspace(0, 1, n_k + 1)[1:]:
+            for percent_cheaters in np.linspace(0, 1, n_pc + 1):
+                for percent_cheating in np.linspace(0, 1, n_k + 1):
                     yield percent_cheaters, percent_cheating
         @staticmethod
         def name():
