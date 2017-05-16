@@ -14,7 +14,7 @@ report_images:
 	touch report_images
 
 pylint_log: src/*.py
-	pylint src/*.py | grep -v I:  > pylint_log
+	pylint --disable=I src/*.py > pylint_log
 
 tests:
 	python src/tests.py
