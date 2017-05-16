@@ -70,7 +70,7 @@ def plausible_parameters(true_grades, true_seats, model, summary, granularity, n
         p_bar.update(index)
         yield model_on_params(true_grades, true_seats, true_value, model, params, summary, n_trials)
 
-def model_on_params(true_grades, true_seats, true_value, model, params, summary, n_trials):
+def model_on_params(true_grades, true_seats, true_value, model, params, summary, n_trials, tail_type=TailType.UNKNOWN):
     """
     Run the given model on the given parameters.
 
@@ -98,8 +98,8 @@ def model_on_params(true_grades, true_seats, true_value, model, params, summary,
     model_values = [summary(current_model.create_grades(true_seats),
                             true_seats)
                     for _ in range(n_trials)]
-    p_val = p_value(true_value, model_values, TailType.UNKNOWN)
-    return params, p_val, PermutationReport(true_value, model_values, p_val)
+    p_val = p_value(true_value, model_values, tail_type)
+    return params, p_val, PermutationReport(true_value, model_values, tail_type)
 
 def score_diff_summary(grades, seats):
     """

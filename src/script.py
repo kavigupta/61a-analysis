@@ -4,6 +4,8 @@ A script to be run.
 from sys import argv
 from multiprocessing import Pool
 
+from statistics import TailType
+
 from models import model_on_params, binary_cheater, one_way_vs_two_way_summary, RandomSeatingModel
 
 from evaluations import proc_evaluations
@@ -49,7 +51,7 @@ def proc_param(param):
     """
     Process the given parameter
     """
-    result = model_on_params(EVALS, SEATS, TRUE_VALUE, MODEL, param, one_way_vs_two_way_summary_correlation, N_TRIALS)
+    result = model_on_params(EVALS, SEATS, TRUE_VALUE, MODEL, param, one_way_vs_two_way_summary_correlation, N_TRIALS, tail_type=TailType.KNOWN_HIGH)
     print(result)
 
 Pool(N_THREADS).map(proc_param, PARAMS)
