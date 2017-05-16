@@ -1,7 +1,7 @@
 """
 A script to be run.
 """
-from sys import argv
+import sys
 from multiprocessing import Pool
 
 from statistics import TailType
@@ -18,13 +18,13 @@ def usage():
     """
     raise RuntimeError("Usage: script.py GRANULARITY N_TRIALS N_THREADS")
 
-if len(argv) != 4:
+if len(sys.argv) != 4:
     usage()
 
 try:
-    GRANULARITY = int(argv[1])
-    N_TRIALS = int(argv[2])
-    N_THREADS = int(argv[3])
+    GRANULARITY = int(sys.argv[1])
+    N_TRIALS = int(sys.argv[2])
+    N_THREADS = int(sys.argv[3])
 except ValueError:
     usage()
 
@@ -53,5 +53,8 @@ def proc_param(param):
     """
     result = model_on_params(EVALS, SEATS, TRUE_VALUE, MODEL, param, one_way_vs_two_way_summary_correlation, N_TRIALS, tail_type=TailType.KNOWN_HIGH)
     print(result)
+    sys.stdout.flush()
+
+sys.stdout = open("log", "w")
 
 Pool(N_THREADS).map(proc_param, PARAMS)
