@@ -45,7 +45,7 @@ MODEL = binary_cheater(RandomSeatingModel, (), AdjacencyType.sideways_only)
 
 TRUE_VALUE = one_way_vs_two_way_summary_correlation(EVALS, SEATS)
 
-PARAMS = list((cheaters, ratio) for cheaters, ratio in MODEL.parameters(GRANULARITY) if cheaters < 0.2)
+PARAMS = list((cheaters, ratio) for cheaters, ratio in MODEL.parameters(GRANULARITY) if cheaters < 0.3)
 
 def proc_param(param):
     """
