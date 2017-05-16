@@ -120,6 +120,10 @@ def score_diff_summary(grades, seats):
     return np.mean(space_adj) - np.mean(non_space_adj)
 
 def one_way_vs_two_way_summary(grades, seats, gambler_fallacy_allowable_limit, similarity_fn):
+    """
+    Returns expectation over all emails e of:
+        [similarity of e and one away from e - similarity of e and two away from e]
+    """
     diffs = []
     for email in grades.emails:
         one_apart, two_apart = seats.similarity_layers(email, 2, AdjacencyType.sideways_only,
